@@ -157,9 +157,36 @@ export default function SettingsDialog({
                 <SelectTrigger className="w-[140px]">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[280px]">
+                  <SelectItem value="id">Bahasa Indonesia</SelectItem>
+                  <SelectItem value="cs">Čeština</SelectItem>
+                  <SelectItem value="da">Dansk</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
                   <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="hr">Hrvatski</SelectItem>
+                  <SelectItem value="it">Italiano</SelectItem>
+                  <SelectItem value="hu">Magyar</SelectItem>
+                  <SelectItem value="nl">Nederlands</SelectItem>
+                  <SelectItem value="nb">Norsk bokmål</SelectItem>
+                  <SelectItem value="pl">Polski</SelectItem>
+                  <SelectItem value="pt-BR">Português (BR)</SelectItem>
+                  <SelectItem value="ro">Română</SelectItem>
+                  <SelectItem value="sk">Slovenčina</SelectItem>
+                  <SelectItem value="fi">Suomi</SelectItem>
+                  <SelectItem value="sv">Svenska</SelectItem>
+                  <SelectItem value="vi">Tiếng Việt</SelectItem>
                   <SelectItem value="tr">Türkçe</SelectItem>
+                  <SelectItem value="el">Ελληνικά</SelectItem>
+                  <SelectItem value="bg">Български</SelectItem>
+                  <SelectItem value="ru">Русский</SelectItem>
+                  <SelectItem value="uk">Українська</SelectItem>
+                  <SelectItem value="th">ไทย</SelectItem>
+                  <SelectItem value="ko">한국어</SelectItem>
+                  <SelectItem value="ja">日本語</SelectItem>
+                  <SelectItem value="zh-CN">简体中文</SelectItem>
+                  <SelectItem value="zh-TW">繁體中文</SelectItem>
                 </SelectContent>
               </Select>
             </div>
