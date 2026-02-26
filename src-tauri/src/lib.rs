@@ -8,12 +8,6 @@ mod otp;
 mod state;
 mod storage;
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -27,7 +21,24 @@ pub fn run() {
         ))
         .plugin(tauri_plugin_shell::init())
         .manage(Mutex::new(state::AppState::default()))
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![
+            commands::auth::is_vault_setup,
+            commands::auth::setup_vault,
+            commands::auth::unlock_vault,
+            commands::auth::lock_vault,
+            commands::auth::change_password,
+            commands::accounts::get_accounts,
+            commands::accounts::add_account,
+            commands::accounts::update_account,
+            commands::accounts::delete_account,
+            commands::accounts::reorder_accounts,
+            commands::accounts::validate_secret,
+            commands::codes::get_all_codes,
+            commands::codes::increment_hotp,
+            commands::settings::get_settings,
+            commands::settings::update_settings,
+            commands::settings::get_categories,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
