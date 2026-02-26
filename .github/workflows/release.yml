@@ -51,6 +51,39 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # --- Set version from tag (v1.2.3 → 1.2.3) ---
+      - name: Set version from tag
+        if: github.ref_type == 'tag'
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+          # Patch tauri.conf.json
+          contents=$(jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json)
+          echo "$contents" > src-tauri/tauri.conf.json
+          # Patch package.json
+          contents=$(jq --arg v "$VERSION" '.version = $v' package.json)
+          echo "$contents" > package.json
+          # Patch Cargo.toml
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml
+
+      # --- Set dev version (1.0.0 → 1.0.0-dev.14) ---
+      - name: Set dev version
+        if: github.ref_type != 'tag'
+        shell: bash
+        run: |
+          BASE=$(jq -r '.version' src-tauri/tauri.conf.json)
+          VERSION="${BASE}-dev.${{ github.run_number }}"
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+          # Patch tauri.conf.json
+          contents=$(jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json)
+          echo "$contents" > src-tauri/tauri.conf.json
+          # Patch package.json
+          contents=$(jq --arg v "$VERSION" '.version = $v' package.json)
+          echo "$contents" > package.json
+          # Cargo.toml doesn't support pre-release with dash, use base version
+          sed -i "s/^version = \".*\"/version = \"$BASE\"/" src-tauri/Cargo.toml
+
       # --- Stable release (v* tag) ---
       - name: Build & publish release
         if: github.ref_type == 'tag'
@@ -59,14 +92,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tauriScript: bunx tauri
-          tagName: v__VERSION__
-          releaseName: "Authenticator v__VERSION__"
+          tagName: v${{ env.APP_VERSION }}
+          releaseName: "Authenticator v${{ env.APP_VERSION }}"
           releaseBody: "See the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
 
-      # --- Dev release (branch push) — each build gets a unique incremental number ---
+      # --- Dev release (branch push) ---
       - name: Build & publish dev build
         if: github.ref_type != 'tag'
         uses: tauri-apps/tauri-action@v0
@@ -74,8 +107,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tauriScript: bunx tauri
-          tagName: v__VERSION__-dev.${{ github.run_number }}
-          releaseName: "Authenticator v__VERSION__-dev.${{ github.run_number }}"
+          tagName: v${{ env.APP_VERSION }}
+          releaseName: "Authenticator v${{ env.APP_VERSION }}"
           releaseBody: |
             **Dev Build #${{ github.run_number }}** from `${{ github.ref_name }}` branch.
 
