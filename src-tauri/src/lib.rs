@@ -1,7 +1,7 @@
 use std::sync::Mutex;
 
 use tauri::{
-    menu::{MenuBuilder, MenuItemBuilder},
+    menu::{MenuBuilder, MenuItem, MenuItemBuilder},
     tray::TrayIconBuilder,
     Emitter, Manager,
 };
@@ -14,6 +14,35 @@ mod models;
 mod otp;
 mod state;
 mod storage;
+
+/// Holds references to tray menu items so their text can be updated at runtime.
+struct TrayMenuItems {
+    open: MenuItem<tauri::Wry>,
+    lock: MenuItem<tauri::Wry>,
+    quit: MenuItem<tauri::Wry>,
+}
+
+#[tauri::command]
+fn update_tray_labels(
+    tray_items: tauri::State<'_, TrayMenuItems>,
+    open_label: String,
+    lock_label: String,
+    quit_label: String,
+) -> Result<(), String> {
+    tray_items
+        .open
+        .set_text(&open_label)
+        .map_err(|e| e.to_string())?;
+    tray_items
+        .lock
+        .set_text(&lock_label)
+        .map_err(|e| e.to_string())?;
+    tray_items
+        .quit
+        .set_text(&quit_label)
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -52,12 +81,20 @@ pub fn run() {
             commands::import_export::export_backup,
             commands::import_export::import_backup,
             commands::import_export::export_plain,
+            update_tray_labels,
         ])
         .setup(|app| {
-            // Create menu items
+            // Create menu items (default English, updated by frontend on init)
             let open = MenuItemBuilder::with_id("open", "Open").build(app)?;
             let lock = MenuItemBuilder::with_id("lock", "Lock").build(app)?;
             let quit = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
+
+            // Store menu item handles for dynamic label updates
+            app.manage(TrayMenuItems {
+                open: open.clone(),
+                lock: lock.clone(),
+                quit: quit.clone(),
+            });
 
             // Build the tray menu
             let menu = MenuBuilder::new(app)

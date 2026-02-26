@@ -70,4 +70,8 @@ export const api = {
     invoke<AccountView[]>("import_backup", { path, password }),
   exportPlain: (path: string, password: string) =>
     invoke<boolean>("export_plain", { path, password }),
+
+  // Tray
+  updateTrayLabels: (openLabel: string, lockLabel: string, quitLabel: string) =>
+    invoke<void>("update_tray_labels", { openLabel, lockLabel, quitLabel }),
 };

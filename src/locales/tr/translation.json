@@ -128,5 +128,10 @@
     "copy": "Kodu Kopyala",
     "lock": "Kilitle",
     "settings": "Ayarlar"
+  },
+  "tray": {
+    "open": "Aç",
+    "lock": "Kilitle",
+    "quit": "Çıkış"
   }
 }

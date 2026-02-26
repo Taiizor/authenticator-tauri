@@ -39,7 +39,7 @@ import type { AccountView, Settings } from "@/types";
 type AppScreen = "loading" | "setup" | "locked" | "unlocked";
 
 function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // App state machine
   const [screen, setScreen] = useState<AppScreen>("loading");
@@ -120,6 +120,13 @@ function App() {
     }
     init();
   }, []);
+
+  // Sync tray menu labels with current language
+  useEffect(() => {
+    api
+      .updateTrayLabels(t("tray.open"), t("tray.lock"), t("tray.quit"))
+      .catch(() => {});
+  }, [i18n.language, t]);
 
   // Listen for vault-locked event from tray
   useEffect(() => {

@@ -128,5 +128,10 @@
     "copy": "Copy Code",
     "lock": "Lock",
     "settings": "Settings"
+  },
+  "tray": {
+    "open": "Open",
+    "lock": "Lock",
+    "quit": "Quit"
   }
 }
