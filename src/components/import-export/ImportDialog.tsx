@@ -2,18 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { open } from "@tauri-apps/plugin-dialog";
 import { toast } from "sonner";
+import { Link, Image, FileText, ShieldCheck } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,8 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/tauri";
+
+type ImportMethod = "uri" | "qr" | "file" | "backup";
 
 interface ImportDialogProps {
   open: boolean;
@@ -41,6 +37,13 @@ const IMPORT_FORMATS = [
   { value: "csv", labelKey: "import_export.formats.csv" },
 ] as const;
 
+const METHODS = [
+  { id: "uri" as const, icon: Link, labelKey: "import_export.method_uri", descKey: "import_export.method_uri_desc" },
+  { id: "qr" as const, icon: Image, labelKey: "import_export.method_qr", descKey: "import_export.method_qr_desc" },
+  { id: "file" as const, icon: FileText, labelKey: "import_export.method_file", descKey: "import_export.method_file_desc" },
+  { id: "backup" as const, icon: ShieldCheck, labelKey: "import_export.method_backup", descKey: "import_export.method_backup_desc" },
+];
+
 export default function ImportDialog({
   open: isOpen,
   onOpenChange,
@@ -48,25 +51,28 @@ export default function ImportDialog({
 }: ImportDialogProps) {
   const { t } = useTranslation();
 
-  // URI tab state
+  const [method, setMethod] = useState<ImportMethod | null>(null);
+
+  // URI
   const [uri, setUri] = useState("");
   const [uriLoading, setUriLoading] = useState(false);
 
-  // QR tab state
+  // QR
   const [qrPath, setQrPath] = useState("");
   const [qrLoading, setQrLoading] = useState(false);
 
-  // File tab state
+  // File
   const [fileFormat, setFileFormat] = useState("");
   const [filePath, setFilePath] = useState("");
   const [fileLoading, setFileLoading] = useState(false);
 
-  // Backup tab state
+  // Backup
   const [backupPath, setBackupPath] = useState("");
   const [backupPassword, setBackupPassword] = useState("");
   const [backupLoading, setBackupLoading] = useState(false);
 
   function resetState() {
+    setMethod(null);
     setUri("");
     setUriLoading(false);
     setQrPath("");
@@ -80,9 +86,7 @@ export default function ImportDialog({
   }
 
   function handleOpenChange(value: boolean) {
-    if (!value) {
-      resetState();
-    }
+    if (!value) resetState();
     onOpenChange(value);
   }
 
@@ -95,11 +99,7 @@ export default function ImportDialog({
       onImported();
       handleOpenChange(false);
     } catch (err) {
-      toast.error(
-        t("import_export.import_error", {
-          error: err instanceof Error ? err.message : String(err),
-        })
-      );
+      toast.error(t("import_export.import_error", { error: String(err) }));
     } finally {
       setUriLoading(false);
     }
@@ -108,16 +108,9 @@ export default function ImportDialog({
   async function handleSelectQrImage() {
     const selected = await open({
       multiple: false,
-      filters: [
-        {
-          name: "Images",
-          extensions: ["png", "jpg", "jpeg"],
-        },
-      ],
+      filters: [{ name: "Images", extensions: ["png", "jpg", "jpeg"] }],
     });
-    if (selected) {
-      setQrPath(selected);
-    }
+    if (selected) setQrPath(selected);
   }
 
   async function handleImportQr() {
@@ -125,17 +118,11 @@ export default function ImportDialog({
     setQrLoading(true);
     try {
       const result = await api.importFromQrImage(qrPath);
-      toast.success(
-        t("import_export.import_success", { count: result.length })
-      );
+      toast.success(t("import_export.import_success", { count: result.length }));
       onImported();
       handleOpenChange(false);
     } catch (err) {
-      toast.error(
-        t("import_export.import_error", {
-          error: err instanceof Error ? err.message : String(err),
-        })
-      );
+      toast.error(t("import_export.import_error", { error: String(err) }));
     } finally {
       setQrLoading(false);
     }
@@ -144,16 +131,9 @@ export default function ImportDialog({
   async function handleSelectFile() {
     const selected = await open({
       multiple: false,
-      filters: [
-        {
-          name: "Import Files",
-          extensions: ["json", "csv", "txt"],
-        },
-      ],
+      filters: [{ name: "Import Files", extensions: ["json", "csv", "txt"] }],
     });
-    if (selected) {
-      setFilePath(selected);
-    }
+    if (selected) setFilePath(selected);
   }
 
   async function handleImportFile() {
@@ -161,17 +141,11 @@ export default function ImportDialog({
     setFileLoading(true);
     try {
       const result = await api.importFromFile(filePath, fileFormat);
-      toast.success(
-        t("import_export.import_success", { count: result.length })
-      );
+      toast.success(t("import_export.import_success", { count: result.length }));
       onImported();
       handleOpenChange(false);
     } catch (err) {
-      toast.error(
-        t("import_export.import_error", {
-          error: err instanceof Error ? err.message : String(err),
-        })
-      );
+      toast.error(t("import_export.import_error", { error: String(err) }));
     } finally {
       setFileLoading(false);
     }
@@ -180,16 +154,9 @@ export default function ImportDialog({
   async function handleSelectBackup() {
     const selected = await open({
       multiple: false,
-      filters: [
-        {
-          name: "Backup Files",
-          extensions: ["authbackup"],
-        },
-      ],
+      filters: [{ name: "Backup Files", extensions: ["authbackup"] }],
     });
-    if (selected) {
-      setBackupPath(selected);
-    }
+    if (selected) setBackupPath(selected);
   }
 
   async function handleImportBackup() {
@@ -197,17 +164,11 @@ export default function ImportDialog({
     setBackupLoading(true);
     try {
       const result = await api.importBackup(backupPath, backupPassword);
-      toast.success(
-        t("import_export.import_success", { count: result.length })
-      );
+      toast.success(t("import_export.import_success", { count: result.length }));
       onImported();
       handleOpenChange(false);
     } catch (err) {
-      toast.error(
-        t("import_export.import_error", {
-          error: err instanceof Error ? err.message : String(err),
-        })
-      );
+      toast.error(t("import_export.import_error", { error: String(err) }));
     } finally {
       setBackupLoading(false);
     }
@@ -215,38 +176,54 @@ export default function ImportDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[420px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("import_export.import")}</DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="uri">
-          <TabsList className="w-full">
-            <TabsTrigger value="uri">
-              {t("import_export.import_uri")}
-            </TabsTrigger>
-            <TabsTrigger value="qr">
-              {t("import_export.import_qr")}
-            </TabsTrigger>
-            <TabsTrigger value="file">
-              {t("import_export.import_file")}
-            </TabsTrigger>
-            <TabsTrigger value="backup">
-              {t("import_export.export_backup")}
-            </TabsTrigger>
-          </TabsList>
+        {/* Method selector grid */}
+        <div className="grid grid-cols-4 gap-2">
+          {METHODS.map((m) => {
+            const Icon = m.icon;
+            const isSelected = method === m.id;
+            return (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => setMethod(m.id)}
+                className={`flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition-colors ${
+                  isSelected
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-card hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                <Icon className="size-5" />
+                <span className="text-xs font-medium leading-tight">
+                  {t(m.labelKey)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-          {/* URI Tab */}
-          <TabsContent value="uri" className="space-y-4 pt-4">
+        {/* Selected method description */}
+        {method && (
+          <p className="text-xs text-muted-foreground text-center">
+            {t(METHODS.find((m) => m.id === method)!.descKey)}
+          </p>
+        )}
+
+        {/* URI form */}
+        {method === "uri" && (
+          <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="import-uri">
-                {t("import_export.import_uri")}
-              </Label>
+              <Label htmlFor="import-uri">{t("import_export.import_uri")}</Label>
               <Input
                 id="import-uri"
                 value={uri}
                 onChange={(e) => setUri(e.target.value)}
                 placeholder="otpauth://totp/..."
+                onKeyDown={(e) => e.key === "Enter" && handleImportUri()}
               />
             </div>
             <Button
@@ -256,25 +233,19 @@ export default function ImportDialog({
             >
               {t("import_export.import")}
             </Button>
-          </TabsContent>
+          </div>
+        )}
 
-          {/* QR Image Tab */}
-          <TabsContent value="qr" className="space-y-4 pt-4">
-            <div className="flex flex-col gap-2">
-              <Label>{t("import_export.import_qr")}</Label>
-              <Button
-                variant="outline"
-                onClick={handleSelectQrImage}
-                className="w-full"
-              >
-                {t("import_export.drop_file")}
-              </Button>
-              {qrPath && (
-                <p className="text-sm text-muted-foreground truncate">
-                  {qrPath}
-                </p>
+        {/* QR form */}
+        {method === "qr" && (
+          <div className="flex flex-col gap-3">
+            <Button variant="outline" onClick={handleSelectQrImage} className="w-full">
+              {qrPath ? (
+                <span className="truncate">{qrPath.split(/[/\\]/).pop()}</span>
+              ) : (
+                t("import_export.select_file")
               )}
-            </div>
+            </Button>
             <Button
               onClick={handleImportQr}
               disabled={!qrPath || qrLoading}
@@ -282,17 +253,17 @@ export default function ImportDialog({
             >
               {t("import_export.import")}
             </Button>
-          </TabsContent>
+          </div>
+        )}
 
-          {/* File Tab */}
-          <TabsContent value="file" className="space-y-4 pt-4">
+        {/* File form */}
+        {method === "file" && (
+          <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <Label>{t("import_export.select_format")}</Label>
               <Select value={fileFormat} onValueChange={setFileFormat}>
                 <SelectTrigger className="w-full">
-                  <SelectValue
-                    placeholder={t("import_export.select_format")}
-                  />
+                  <SelectValue placeholder={t("import_export.select_format")} />
                 </SelectTrigger>
                 <SelectContent>
                   {IMPORT_FORMATS.map((fmt) => (
@@ -303,24 +274,18 @@ export default function ImportDialog({
                 </SelectContent>
               </Select>
             </div>
-
-            <Separator />
-
-            <div className="flex flex-col gap-2">
-              <Button
-                variant="outline"
-                onClick={handleSelectFile}
-                disabled={!fileFormat}
-                className="w-full"
-              >
-                {t("import_export.drop_file")}
-              </Button>
-              {filePath && (
-                <p className="text-sm text-muted-foreground truncate">
-                  {filePath}
-                </p>
+            <Button
+              variant="outline"
+              onClick={handleSelectFile}
+              disabled={!fileFormat}
+              className="w-full"
+            >
+              {filePath ? (
+                <span className="truncate">{filePath.split(/[/\\]/).pop()}</span>
+              ) : (
+                t("import_export.select_file")
               )}
-            </div>
+            </Button>
             <Button
               onClick={handleImportFile}
               disabled={!filePath || !fileFormat || fileLoading}
@@ -328,27 +293,19 @@ export default function ImportDialog({
             >
               {t("import_export.import")}
             </Button>
-          </TabsContent>
+          </div>
+        )}
 
-          {/* Backup Tab */}
-          <TabsContent value="backup" className="space-y-4 pt-4">
-            <div className="flex flex-col gap-2">
-              <Button
-                variant="outline"
-                onClick={handleSelectBackup}
-                className="w-full"
-              >
-                {t("import_export.drop_file")}
-              </Button>
-              {backupPath && (
-                <p className="text-sm text-muted-foreground truncate">
-                  {backupPath}
-                </p>
+        {/* Backup form */}
+        {method === "backup" && (
+          <div className="flex flex-col gap-3">
+            <Button variant="outline" onClick={handleSelectBackup} className="w-full">
+              {backupPath ? (
+                <span className="truncate">{backupPath.split(/[/\\]/).pop()}</span>
+              ) : (
+                t("import_export.select_file")
               )}
-            </div>
-
-            <Separator />
-
+            </Button>
             <div className="flex flex-col gap-2">
               <Label htmlFor="backup-password">
                 {t("import_export.backup_password")}
@@ -359,6 +316,7 @@ export default function ImportDialog({
                 value={backupPassword}
                 onChange={(e) => setBackupPassword(e.target.value)}
                 placeholder={t("import_export.backup_password")}
+                onKeyDown={(e) => e.key === "Enter" && handleImportBackup()}
               />
             </div>
             <Button
@@ -368,8 +326,15 @@ export default function ImportDialog({
             >
               {t("import_export.import")}
             </Button>
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!method && (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            {t("import_export.import_from")}
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   );
