@@ -58,14 +58,15 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
-          # Patch tauri.conf.json
-          contents=$(jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json)
-          echo "$contents" > src-tauri/tauri.conf.json
-          # Patch package.json
-          contents=$(jq --arg v "$VERSION" '.version = $v' package.json)
-          echo "$contents" > package.json
-          # Patch Cargo.toml
-          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml
+          # Patch tauri.conf.json & package.json
+          jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
+          jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
+          # Patch Cargo.toml (cross-platform)
+          python3 -c "
+          import re, pathlib
+          p = pathlib.Path('src-tauri/Cargo.toml')
+          p.write_text(re.sub(r'^version = \".*\"', 'version = \"$VERSION\"', p.read_text(), count=1, flags=re.M))
+          "
 
       # --- Set dev version (1.0.0 → 1.0.0-dev.14) ---
       - name: Set dev version
@@ -75,14 +76,9 @@ jobs:
           BASE=$(jq -r '.version' src-tauri/tauri.conf.json)
           VERSION="${BASE}-dev.${{ github.run_number }}"
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
-          # Patch tauri.conf.json
-          contents=$(jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json)
-          echo "$contents" > src-tauri/tauri.conf.json
-          # Patch package.json
-          contents=$(jq --arg v "$VERSION" '.version = $v' package.json)
-          echo "$contents" > package.json
-          # Cargo.toml doesn't support pre-release with dash, use base version
-          sed -i "s/^version = \".*\"/version = \"$BASE\"/" src-tauri/Cargo.toml
+          # Patch tauri.conf.json & package.json
+          jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
+          jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
 
       # --- Stable release (v* tag) ---
       - name: Build & publish release
