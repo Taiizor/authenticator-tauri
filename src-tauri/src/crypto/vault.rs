@@ -3,7 +3,7 @@ use aes_gcm::{
     Aes256Gcm, Nonce,
 };
 use argon2::Argon2;
-use rand::RngCore;
+use rand::Rng;
 use zeroize::Zeroize;
 
 use crate::models::account::Account;
