@@ -136,7 +136,7 @@ export default function AddEditDialog({
         await api.addAccount({
           name: name.trim(),
           secret: secret.trim(),
-          otp_type: otpType,
+          otpType,
           digits,
           period,
           algorithm,
@@ -157,7 +157,7 @@ export default function AddEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? t("edit_account") : t("add_account")}

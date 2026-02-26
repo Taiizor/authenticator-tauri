@@ -224,7 +224,7 @@ function App() {
 
   // Unlocked - main app
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Header
         onAddAccount={() => {
           setEditAccount(null);
@@ -235,7 +235,7 @@ function App() {
         onLock={handleLock}
       />
 
-      <main className="flex-1 flex flex-col px-4 py-3 gap-3">
+      <main className="flex-1 flex flex-col px-4 py-3 gap-3 overflow-y-auto">
         <SearchBar value={search} onChange={setSearch} />
 
         {categories.length > 0 && (

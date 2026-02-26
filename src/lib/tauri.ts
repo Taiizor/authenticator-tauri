@@ -11,8 +11,8 @@ export const api = {
   tryStoredPassword: () => invoke<boolean>("try_stored_password"),
   changePassword: (oldPassword: string, newPassword: string) =>
     invoke<boolean>("change_password", {
-      old_password: oldPassword,
-      new_password: newPassword,
+      oldPassword,
+      newPassword,
     }),
 
   // Accounts
@@ -20,7 +20,7 @@ export const api = {
   addAccount: (params: {
     name: string;
     secret: string;
-    otp_type: "totp" | "hotp";
+    otpType: "totp" | "hotp";
     digits: number;
     period: number;
     algorithm: "SHA1" | "SHA256" | "SHA512";
