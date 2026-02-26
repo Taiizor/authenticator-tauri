@@ -316,7 +316,7 @@ function App() {
             <AlertDialogCancel>{t("account_form.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-destructive text-white hover:bg-destructive/90"
+              variant="destructive"
             >
               {t("delete")}
             </AlertDialogAction>
