@@ -38,6 +38,8 @@
       "icons/icon.ico"
     ],
     "windows": {
+      // WIX MSI installer languages
+      // Note: id-ID (Indonesian) is not supported by WIX
       "wix": {
         "language": [
           "bg-BG",
@@ -51,7 +53,7 @@
           "fr-FR",
           "hr-HR",
           "hu-HU",
-          "id-ID",
+          // "id-ID", // Indonesian - not supported by WIX
           "it-IT",
           "ja-JP",
           "ko-KR",
@@ -68,9 +70,10 @@
           "uk-UA",
           "vi-VN",
           "zh-CN",
-          "zh-TW"
+          "zh-TW",
         ]
       },
+      // NSIS EXE installer languages (supports all languages including Indonesian)
       "nsis": {
         "languages": [
           "Bulgarian",
@@ -101,7 +104,7 @@
           "TradChinese",
           "Turkish",
           "Ukrainian",
-          "Vietnamese"
+          "Vietnamese",
         ],
         "displayLanguageSelector": true
       }

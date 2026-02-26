@@ -59,7 +59,7 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
           # Patch tauri.conf.json & package.json
-          jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
+          jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json5 > tmp.json && mv tmp.json src-tauri/tauri.conf.json5
           jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
           # Patch Cargo.toml (cross-platform)
           python3 -c "
@@ -73,14 +73,14 @@ jobs:
         if: github.ref_type != 'tag'
         shell: bash
         run: |
-          BASE=$(jq -r '.version' src-tauri/tauri.conf.json)
+          BASE=$(jq -r '.version' src-tauri/tauri.conf.json5)
           RUN=${{ github.run_number }}
           # semver + MSI-compatible: numeric-only pre-release (1.0.0-14)
           BUNDLE_VERSION="${BASE}-${RUN}"
           # Human-readable version for tag/release name
           echo "APP_VERSION=${BASE}-dev.${RUN}" >> $GITHUB_ENV
           # Patch tauri.conf.json & package.json
-          jq --arg v "$BUNDLE_VERSION" '.version = $v' src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
+          jq --arg v "$BUNDLE_VERSION" '.version = $v' src-tauri/tauri.conf.json5 > tmp.json && mv tmp.json src-tauri/tauri.conf.json5
           jq --arg v "$BUNDLE_VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
 
       # --- Stable release (v* tag) ---
