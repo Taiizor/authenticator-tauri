@@ -1,0 +1,3 @@
+export function useAutoLock() {
+  return {};
+}
