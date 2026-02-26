@@ -1,26 +1,50 @@
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
+pub enum Theme {
+    Light,
+    Dark,
+    System,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppSettings {
-    pub theme: String,
-    pub compact_mode: bool,
-    pub show_icons: bool,
-    pub auto_lock_timeout: u64,
+    #[serde(default = "default_theme")]
+    pub theme: Theme,
+    #[serde(default = "default_language")]
+    pub language: String,
+    #[serde(default = "default_auto_lock")]
+    pub auto_lock_minutes: u32,
+    #[serde(default)]
     pub minimize_to_tray: bool,
+    #[serde(default)]
     pub start_minimized: bool,
-    pub auto_start: bool,
+    #[serde(default)]
+    pub remember_password: bool,
+}
+
+fn default_theme() -> Theme {
+    Theme::System
+}
+
+fn default_language() -> String {
+    "en".to_string()
+}
+
+fn default_auto_lock() -> u32 {
+    5
 }
 
 impl Default for AppSettings {
     fn default() -> Self {
         Self {
-            theme: "system".to_string(),
-            compact_mode: false,
-            show_icons: true,
-            auto_lock_timeout: 300,
+            theme: default_theme(),
+            language: default_language(),
+            auto_lock_minutes: default_auto_lock(),
             minimize_to_tray: true,
             start_minimized: false,
-            auto_start: false,
+            remember_password: false,
         }
     }
 }
