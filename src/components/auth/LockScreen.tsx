@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -67,9 +67,8 @@ export default function LockScreen({ onUnlock }: LockScreenProps) {
               <Label htmlFor="lock-password">
                 {t("lock_screen.password_label")}
               </Label>
-              <Input
+              <PasswordInput
                 id="lock-password"
-                type="password"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);

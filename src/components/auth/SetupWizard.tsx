@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -89,9 +89,8 @@ export default function SetupWizard({ onComplete }: SetupWizardProps) {
               <Label htmlFor="setup-password">
                 {t("setup.password_label")}
               </Label>
-              <Input
+              <PasswordInput
                 id="setup-password"
-                type="password"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -117,9 +116,8 @@ export default function SetupWizard({ onComplete }: SetupWizardProps) {
               <Label htmlFor="setup-confirm">
                 {t("setup.confirm_label")}
               </Label>
-              <Input
+              <PasswordInput
                 id="setup-confirm"
-                type="password"
                 value={confirmPassword}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);

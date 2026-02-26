@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/tauri";
@@ -122,9 +122,8 @@ export default function ExportDialog({
               <Label htmlFor="export-password">
                 {t("import_export.backup_password")}
               </Label>
-              <Input
+              <PasswordInput
                 id="export-password"
-                type="password"
                 value={backupPassword}
                 onChange={(e) => setBackupPassword(e.target.value)}
                 placeholder={t("import_export.backup_password")}
@@ -156,9 +155,8 @@ export default function ExportDialog({
               <Label htmlFor="plain-export-password">
                 {t("import_export.backup_password")}
               </Label>
-              <Input
+              <PasswordInput
                 id="plain-export-password"
-                type="password"
                 value={plainPassword}
                 onChange={(e) => setPlainPassword(e.target.value)}
                 placeholder={t("import_export.backup_password")}

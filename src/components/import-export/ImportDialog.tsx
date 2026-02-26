@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -310,9 +311,8 @@ export default function ImportDialog({
               <Label htmlFor="backup-password">
                 {t("import_export.backup_password")}
               </Label>
-              <Input
+              <PasswordInput
                 id="backup-password"
-                type="password"
                 value={backupPassword}
                 onChange={(e) => setBackupPassword(e.target.value)}
                 placeholder={t("import_export.backup_password")}
