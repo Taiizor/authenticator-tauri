@@ -43,26 +43,24 @@ export default function AccountCard({
   const isExpiring = code ? code.remaining < 5 : false;
 
   return (
-    <Card className="hover:bg-accent/50 transition-colors cursor-pointer py-0">
-      <CardContent className="flex items-center gap-4 px-4 py-3">
+    <Card className="overflow-hidden hover:bg-accent/50 transition-colors cursor-pointer py-0">
+      <CardContent className="flex items-center gap-3 px-3 py-3">
         {/* Left: Icon / Color indicator */}
-        <div className="flex flex-col items-center gap-1">
-          <div
-            className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
-            style={{ backgroundColor: bgColor }}
-          >
-            {initial}
-          </div>
+        <div
+          className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
+          style={{ backgroundColor: bgColor }}
+        >
+          {initial}
         </div>
 
         {/* Middle: Account info */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-1.5">
             <span className="truncate text-sm font-semibold">
               {account.name}
             </span>
             {account.category && (
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+              <Badge variant="secondary" className="shrink-0 text-[10px] px-1.5 py-0">
                 {account.category}
               </Badge>
             )}
@@ -75,10 +73,10 @@ export default function AccountCard({
         </div>
 
         {/* Right: Code display + progress/action */}
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex shrink-0 flex-col items-end gap-1">
           <button
             type="button"
-            className="font-mono text-2xl font-bold tracking-wider tabular-nums hover:text-primary transition-colors"
+            className="font-mono text-lg font-bold tabular-nums hover:text-primary transition-colors"
             onClick={() => code && onCopy(code.code)}
             aria-label={t("copy_code")}
           >
@@ -86,7 +84,7 @@ export default function AccountCard({
           </button>
 
           {account.otp_type === "totp" ? (
-            <div className="w-28">
+            <div className="w-full">
               <Progress
                 value={progressValue}
                 className={`h-1 ${isExpiring ? "[&>[data-slot=progress-indicator]]:bg-destructive" : ""}`}
