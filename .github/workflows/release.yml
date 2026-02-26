@@ -71,7 +71,7 @@ jobs:
       # --- Tagged release (v*) ---
       - name: Build & publish release
         if: github.ref_type == 'tag'
-        uses: tauri-apps/tauri-action@v1
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -85,7 +85,7 @@ jobs:
       # --- Nightly release (branch push) ---
       - name: Build & publish nightly
         if: github.ref_type != 'tag'
-        uses: tauri-apps/tauri-action@v1
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
