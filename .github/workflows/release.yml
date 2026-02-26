@@ -40,6 +40,7 @@ jobs:
         uses: arduino/setup-protoc@v3
         with:
           version: "25.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install system dependencies (Linux)
         if: matrix.platform == 'ubuntu-22.04'
