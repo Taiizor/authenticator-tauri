@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
@@ -78,7 +77,7 @@ export default function SetupWizard({ onComplete }: SetupWizardProps) {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10">
-            <Shield className="size-6 text-primary" />
+            <img src="/logo.svg" alt="Authenticator" className="size-6" />
           </div>
           <CardTitle className="text-2xl">{t("setup.title")}</CardTitle>
           <CardDescription>{t("setup.description")}</CardDescription>

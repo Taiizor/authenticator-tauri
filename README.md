@@ -1,13 +1,15 @@
 <p align="center">
-  <h1 align="center">&#x1f6e1;&#xfe0f; Authenticator</h1>
+  <img src="logo.svg" alt="Authenticator" width="128" height="128" />
 </p>
+
+<h1 align="center">Authenticator</h1>
 
 <p align="center">
   A modern, cross-platform, open-source two-factor authentication app built with Tauri v2 and React.
 </p>
 
 <p align="center">
-  <a href="https://github.com/Taiizor/authenticator-tauri/actions"><img src="https://img.shields.io/github/actions/workflow/status/Taiizor/authenticator-tauri/build.yml?branch=develop&style=flat-square" alt="Build Status"></a>
+  <a href="https://github.com/Taiizor/authenticator-tauri/actions"><img src="https://img.shields.io/github/actions/workflow/status/Taiizor/authenticator-tauri/ci.yml?branch=develop&style=flat-square" alt="Build Status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License: MIT"></a>
   <a href="#"><img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square" alt="Platform"></a>
 </p>
@@ -28,7 +30,7 @@ Authenticator is a desktop two-factor authentication (2FA) application that keep
 - **Rich import support** -- Import from Google Authenticator, Aegis, 2FAS, Ente Auth, CSV files, QR code images, and `otpauth://` URIs
 - **Encrypted backup & restore** -- Export and import password-protected backups to keep your vault safe across devices
 - **Dark / Light / System theme** -- Seamlessly follows your OS appearance preference or lets you choose manually
-- **English & Turkish languages** -- Localized interface with i18next; contributions for additional languages welcome
+- **29 languages** -- Localized interface with i18next supporting English, Turkish, Chinese, Japanese, Korean, Spanish, Portuguese, French, German, Italian, Russian, and many more
 - **System tray integration** -- Minimize to tray, restore on double-click, lock and quit from the tray menu
 - **Drag & drop reordering** -- Organize accounts in any order you like with intuitive drag and drop
 - **Keyboard shortcuts** -- Navigate and manage accounts without leaving the keyboard

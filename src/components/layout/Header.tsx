@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { Plus, Download, Settings, Lock, Shield } from "lucide-react";
+import { Plus, Download, Settings, Lock } from "lucide-react";
 
 interface HeaderProps {
   onAddAccount: () => void;
@@ -27,7 +27,7 @@ export default function Header({
     <header className="sticky top-0 z-50 bg-background border-b">
       <div className="flex items-center justify-between px-4 py-2">
         <div className="flex items-center gap-2">
-          <Shield className="size-5 text-primary" />
+          <img src="/logo.svg" alt="Authenticator" className="size-5" />
           <span className="text-sm font-semibold tracking-tight">
             {t("app_name")}
           </span>

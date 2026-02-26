@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
@@ -55,7 +54,7 @@ export default function LockScreen({ onUnlock }: LockScreenProps) {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10">
-            <Lock className="size-6 text-primary" />
+            <img src="/logo.svg" alt="Authenticator" className="size-6" />
           </div>
           <CardTitle className="text-2xl">
             {t("lock_screen.title")}
