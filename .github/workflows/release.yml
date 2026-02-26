@@ -10,22 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  # Clean up the previous nightly release so artifacts don't pile up
-  cleanup-nightly:
-    if: github.ref_type != 'tag'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Delete previous nightly release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release delete nightly --yes --cleanup-tag 2>/dev/null || true
-
   build:
-    needs: [cleanup-nightly]
-    # Run even when cleanup-nightly is skipped (tag pushes)
-    if: always() && !failure() && !cancelled()
     strategy:
       fail-fast: false
       matrix:
@@ -68,7 +53,7 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      # --- Tagged release (v*) ---
+      # --- Stable release (v* tag) ---
       - name: Build & publish release
         if: github.ref_type == 'tag'
         uses: tauri-apps/tauri-action@v0
@@ -82,22 +67,22 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      # --- Nightly release (branch push) ---
-      - name: Build & publish nightly
+      # --- Dev release (branch push) — each build gets a unique incremental number ---
+      - name: Build & publish dev build
         if: github.ref_type != 'tag'
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: nightly
-          releaseName: "Nightly Build"
+          tagName: v__VERSION__-dev.${{ github.run_number }}
+          releaseName: "Authenticator v__VERSION__-dev.${{ github.run_number }}"
           releaseBody: |
-            **Automated nightly build** from `${{ github.ref_name }}` branch.
+            **Dev Build #${{ github.run_number }}** from `${{ github.ref_name }}` branch.
 
             Commit: [`${{ github.sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
 
             > [!WARNING]
-            > This is an unstable development build. For production use, download a [versioned release](https://github.com/${{ github.repository }}/releases/latest) instead.
+            > This is a development build. For production use, download the [latest stable release](https://github.com/${{ github.repository }}/releases/latest) instead.
           releaseDraft: false
           prerelease: true
           args: ${{ matrix.args }}
