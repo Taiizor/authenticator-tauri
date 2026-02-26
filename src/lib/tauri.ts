@@ -8,6 +8,7 @@ export const api = {
   unlockVault: (password: string) =>
     invoke<boolean>("unlock_vault", { password }),
   lockVault: () => invoke<void>("lock_vault"),
+  tryStoredPassword: () => invoke<boolean>("try_stored_password"),
   changePassword: (oldPassword: string, newPassword: string) =>
     invoke<boolean>("change_password", {
       old_password: oldPassword,
@@ -67,5 +68,6 @@ export const api = {
     invoke<boolean>("export_backup", { path, password }),
   importBackup: (path: string, password: string) =>
     invoke<AccountView[]>("import_backup", { path, password }),
-  exportPlain: (path: string) => invoke<boolean>("export_plain", { path }),
+  exportPlain: (path: string, password: string) =>
+    invoke<boolean>("export_plain", { path, password }),
 };

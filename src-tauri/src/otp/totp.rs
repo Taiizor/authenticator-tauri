@@ -49,6 +49,9 @@ pub fn generate_totp(account: &Account) -> Result<CodeResponse, String> {
 
 /// Calculates remaining seconds in current TOTP period
 pub fn remaining_seconds(period: u32) -> u32 {
+    if period == 0 {
+        return 0;
+    }
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
@@ -90,6 +93,17 @@ pub fn parse_otpauth_uri(uri: &str) -> Result<Account, String> {
         OtpType::Totp
     };
 
+    let counter = if otp_type == OtpType::Hotp {
+        uri.split('?')
+            .nth(1)
+            .and_then(|q| q.split('&').find(|p| p.starts_with("counter=")))
+            .and_then(|p| p.strip_prefix("counter="))
+            .and_then(|v| v.parse::<u64>().ok())
+            .or(Some(0))
+    } else {
+        None
+    };
+
     Ok(Account {
         id: uuid::Uuid::new_v4().to_string(),
         name: totp.account_name.clone(),
@@ -99,7 +113,7 @@ pub fn parse_otpauth_uri(uri: &str) -> Result<Account, String> {
         digits: totp.digits as u32,
         period: totp.step as u32,
         algorithm,
-        counter: None,
+        counter,
         category: None,
         icon: None,
         color: None,

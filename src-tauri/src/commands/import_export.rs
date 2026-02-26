@@ -184,11 +184,20 @@ pub fn import_backup(
 pub fn export_plain(
     state: State<'_, Mutex<AppState>>,
     path: String,
+    password: String,
 ) -> Result<bool, String> {
     let s = state.lock().map_err(|_| "State lock failed".to_string())?;
 
     if !s.unlocked {
         return Err("Vault is locked".to_string());
+    }
+
+    let current_password = s
+        .password
+        .as_deref()
+        .ok_or_else(|| "No password set".to_string())?;
+    if password != current_password {
+        return Err("Invalid password".to_string());
     }
 
     let json = serde_json::to_string_pretty(&s.accounts)

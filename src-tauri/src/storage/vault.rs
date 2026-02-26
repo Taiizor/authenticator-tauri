@@ -46,8 +46,11 @@ pub fn save_vault(
     let encrypted =
         encrypt_vault(accounts, password)?;
 
-    fs::write(&path, &encrypted)
+    let temp_path = path.with_extension("tmp");
+    fs::write(&temp_path, &encrypted)
         .map_err(|e| format!("Failed to write vault file: {}", e))?;
+    fs::rename(&temp_path, &path)
+        .map_err(|e| format!("Failed to finalize vault file: {}", e))?;
 
     Ok(())
 }
@@ -81,8 +84,11 @@ pub fn save_settings(app: &AppHandle, settings: &AppSettings) -> Result<(), Stri
     let json = serde_json::to_string_pretty(settings)
         .map_err(|e| format!("Failed to serialize settings: {}", e))?;
 
-    fs::write(&path, json)
+    let temp_path = path.with_extension("tmp");
+    fs::write(&temp_path, &json)
         .map_err(|e| format!("Failed to write settings file: {}", e))?;
+    fs::rename(&temp_path, &path)
+        .map_err(|e| format!("Failed to finalize settings file: {}", e))?;
 
     Ok(())
 }

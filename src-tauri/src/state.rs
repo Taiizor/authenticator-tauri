@@ -1,4 +1,3 @@
-use std::sync::Mutex;
 use crate::models::account::Account;
 
 pub struct AppState {
@@ -16,5 +15,3 @@ impl Default for AppState {
         }
     }
 }
-
-pub type AppStateMutex = Mutex<AppState>;

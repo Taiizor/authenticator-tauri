@@ -34,6 +34,16 @@ pub fn add_account(
     icon: Option<String>,
     color: Option<String>,
 ) -> Result<AccountView, String> {
+    if name.trim().is_empty() {
+        return Err("Account name is required".to_string());
+    }
+    if digits < 4 || digits > 10 {
+        return Err("Digits must be between 4 and 10".to_string());
+    }
+    if period == 0 || period > 3600 {
+        return Err("Period must be between 1 and 3600".to_string());
+    }
+
     let mut s = state.lock().map_err(|_| "State lock failed".to_string())?;
 
     if !s.unlocked {

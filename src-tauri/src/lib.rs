@@ -5,6 +5,7 @@ use tauri::{
     tray::TrayIconBuilder,
     Emitter, Manager,
 };
+use zeroize::Zeroize;
 
 mod commands;
 mod crypto;
@@ -33,6 +34,7 @@ pub fn run() {
             commands::auth::unlock_vault,
             commands::auth::lock_vault,
             commands::auth::change_password,
+            commands::auth::try_stored_password,
             commands::accounts::get_accounts,
             commands::accounts::add_account,
             commands::accounts::update_account,
@@ -81,6 +83,13 @@ pub fn run() {
                         "lock" => {
                             let state = app.state::<Mutex<state::AppState>>();
                             if let Ok(mut s) = state.lock() {
+                                // Zeroize sensitive data before dropping
+                                for account in &mut s.accounts {
+                                    account.secret.zeroize();
+                                }
+                                if let Some(ref mut pwd) = s.password {
+                                    pwd.zeroize();
+                                }
                                 s.accounts.clear();
                                 s.password = None;
                                 s.unlocked = false;

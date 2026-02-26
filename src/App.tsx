@@ -94,7 +94,14 @@ function App() {
         const setup = await api.isVaultSetup();
         const s = await api.getSettings();
         initTheme(s.theme);
-        setScreen(setup ? "locked" : "setup");
+
+        if (setup) {
+          // Try auto-unlock from keychain if remember_password is enabled
+          const autoUnlocked = await api.tryStoredPassword();
+          setScreen(autoUnlocked ? "unlocked" : "locked");
+        } else {
+          setScreen("setup");
+        }
       } catch (err) {
         console.error("Init failed:", err);
         setScreen("setup");

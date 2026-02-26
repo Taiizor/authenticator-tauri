@@ -4,6 +4,7 @@ use aes_gcm::{
 };
 use argon2::Argon2;
 use rand::RngCore;
+use zeroize::Zeroize;
 
 use crate::models::account::Account;
 
@@ -34,7 +35,7 @@ pub fn encrypt(data: &[u8], password: &str) -> Result<Vec<u8>, String> {
     let mut salt = [0u8; SALT_LEN];
     rand::rng().fill_bytes(&mut salt);
 
-    let key = derive_key(password, &salt)?;
+    let mut key = derive_key(password, &salt)?;
 
     let mut nonce_bytes = [0u8; NONCE_LEN];
     rand::rng().fill_bytes(&mut nonce_bytes);
@@ -42,6 +43,7 @@ pub fn encrypt(data: &[u8], password: &str) -> Result<Vec<u8>, String> {
 
     let cipher =
         Aes256Gcm::new_from_slice(&key).map_err(|e| format!("Cipher init error: {}", e))?;
+    key.zeroize();
 
     let ciphertext = cipher
         .encrypt(nonce, data)
@@ -66,11 +68,12 @@ pub fn decrypt(encrypted: &[u8], password: &str) -> Result<Vec<u8>, String> {
     let nonce_bytes = &encrypted[SALT_LEN..SALT_LEN + NONCE_LEN];
     let ciphertext = &encrypted[SALT_LEN + NONCE_LEN..];
 
-    let key = derive_key(password, salt)?;
+    let mut key = derive_key(password, salt)?;
     let nonce = Nonce::from_slice(nonce_bytes);
 
     let cipher =
         Aes256Gcm::new_from_slice(&key).map_err(|e| format!("Cipher init error: {}", e))?;
+    key.zeroize();
 
     cipher
         .decrypt(nonce, ciphertext)

@@ -19,11 +19,13 @@ pub fn get_all_codes(state: State<'_, Mutex<AppState>>) -> Result<Vec<CodeRespon
     let mut codes = Vec::new();
 
     for account in &s.accounts {
-        let code = match account.otp_type {
-            OtpType::Totp => totp::generate_totp(account)?,
-            OtpType::Hotp => hotp::generate_hotp(account)?,
-        };
-        codes.push(code);
+        match match account.otp_type {
+            OtpType::Totp => totp::generate_totp(account),
+            OtpType::Hotp => hotp::generate_hotp(account),
+        } {
+            Ok(code) => codes.push(code),
+            Err(e) => eprintln!("Failed to generate code for {}: {}", account.id, e),
+        }
     }
 
     Ok(codes)

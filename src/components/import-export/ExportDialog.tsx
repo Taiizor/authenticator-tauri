@@ -27,11 +27,13 @@ export default function ExportDialog({
 
   const [backupPassword, setBackupPassword] = useState("");
   const [backupLoading, setBackupLoading] = useState(false);
+  const [plainPassword, setPlainPassword] = useState("");
   const [plainLoading, setPlainLoading] = useState(false);
 
   function resetState() {
     setBackupPassword("");
     setBackupLoading(false);
+    setPlainPassword("");
     setPlainLoading(false);
   }
 
@@ -73,6 +75,7 @@ export default function ExportDialog({
   }
 
   async function handleExportPlain() {
+    if (!plainPassword) return;
     setPlainLoading(true);
     try {
       const path = await save({
@@ -87,7 +90,7 @@ export default function ExportDialog({
         setPlainLoading(false);
         return;
       }
-      await api.exportPlain(path);
+      await api.exportPlain(path, plainPassword);
       toast.success(t("import_export.export_success"));
       handleOpenChange(false);
     } catch (err) {
@@ -149,10 +152,23 @@ export default function ExportDialog({
               {t("import_export.export_plain_warning")}
             </p>
 
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="plain-export-password">
+                {t("import_export.backup_password")}
+              </Label>
+              <Input
+                id="plain-export-password"
+                type="password"
+                value={plainPassword}
+                onChange={(e) => setPlainPassword(e.target.value)}
+                placeholder={t("import_export.backup_password")}
+              />
+            </div>
+
             <Button
               variant="outline"
               onClick={handleExportPlain}
-              disabled={plainLoading}
+              disabled={!plainPassword || plainLoading}
               className="w-full"
             >
               {t("import_export.export")}
