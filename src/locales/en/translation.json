@@ -120,7 +120,7 @@
     "github": "GitHub",
     "about_description": "A modern, open-source, cross-platform two-factor authentication app."
   },
-  "confirm_delete": "Are you sure you want to delete \"{{name}}\"?\n\nThis action cannot be undone.",
+  "confirm_delete": "\"{{name}}\" will be permanently deleted. This action cannot be undone.",
   "delete": "Delete",
   "shortcuts": {
     "new": "New Account",

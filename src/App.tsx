@@ -5,6 +5,16 @@ import { Toaster, toast } from "sonner";
 
 import { api } from "@/lib/tauri";
 import { initTheme } from "@/lib/theme";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import { useAccounts } from "@/hooks/useAccounts";
 import { useCodes } from "@/hooks/useCodes";
@@ -40,6 +50,7 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const [deleteAccount, setDeleteAccount] = useState<AccountView | null>(null);
 
   // Search and filter
   const [search, setSearch] = useState("");
@@ -159,18 +170,21 @@ function App() {
     setAddEditOpen(true);
   }, []);
 
-  const handleDelete = useCallback(
-    async (account: AccountView) => {
-      if (!window.confirm(t("confirm_delete", { name: account.name }))) return;
-      try {
-        await api.deleteAccount(account.id);
-        refreshAccounts();
-      } catch (err) {
-        console.error("Delete failed:", err);
-      }
-    },
-    [t, refreshAccounts]
-  );
+  const handleDelete = useCallback((account: AccountView) => {
+    setDeleteAccount(account);
+  }, []);
+
+  const confirmDelete = useCallback(async () => {
+    if (!deleteAccount) return;
+    try {
+      await api.deleteAccount(deleteAccount.id);
+      refreshAccounts();
+    } catch (err) {
+      console.error("Delete failed:", err);
+    } finally {
+      setDeleteAccount(null);
+    }
+  }, [deleteAccount, refreshAccounts]);
 
   const handleReorder = useCallback(
     async (ids: string[]) => {
@@ -285,6 +299,30 @@ function App() {
         open={exportOpen}
         onOpenChange={setExportOpen}
       />
+
+      {/* Delete confirmation */}
+      <AlertDialog
+        open={!!deleteAccount}
+        onOpenChange={(open) => !open && setDeleteAccount(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("delete_account")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("confirm_delete", { name: deleteAccount?.name })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("account_form.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              {t("delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Toaster />
     </div>

@@ -120,7 +120,7 @@
     "github": "GitHub",
     "about_description": "Modern, açık kaynak, çapraz platform iki faktörlü doğrulama uygulaması."
   },
-  "confirm_delete": "\"{{name}}\" hesabını silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz.",
+  "confirm_delete": "\"{{name}}\" kalıcı olarak silinecek. Bu işlem geri alınamaz.",
   "delete": "Sil",
   "shortcuts": {
     "new": "Yeni Hesap",
