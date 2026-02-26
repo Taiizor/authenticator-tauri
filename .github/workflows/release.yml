@@ -1,16 +1,33 @@
-name: Release
+name: Build & Release
 
 on:
   push:
+    branches: [main, develop]
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
   contents: write
 
 jobs:
+  # Clean up the previous nightly release so artifacts don't pile up
+  cleanup-nightly:
+    if: github.ref_type != 'tag'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Delete previous nightly release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete nightly --yes --cleanup-tag 2>/dev/null || true
+
   build:
+    needs: [cleanup-nightly]
+    # Run even when cleanup-nightly is skipped (tag pushes)
+    if: always() && !failure() && !cancelled()
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
@@ -51,7 +68,9 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Build Tauri app
+      # --- Tagged release (v*) ---
+      - name: Build & publish release
+        if: github.ref_type == 'tag'
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,6 +78,26 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: "Authenticator ${{ github.ref_name }}"
           releaseBody: "See the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
+          args: --target ${{ matrix.target }}
+
+      # --- Nightly release (branch push) ---
+      - name: Build & publish nightly
+        if: github.ref_type != 'tag'
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: nightly
+          releaseName: "Nightly Build"
+          releaseBody: |
+            **Automated nightly build** from `${{ github.ref_name }}` branch.
+
+            Commit: [`${{ github.sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+
+            > [!WARNING]
+            > This is an unstable development build. For production use, download a [versioned release](https://github.com/${{ github.repository }}/releases/latest) instead.
+          releaseDraft: false
+          prerelease: true
           args: --target ${{ matrix.target }}
