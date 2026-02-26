@@ -53,19 +53,19 @@ Feature requests are welcome! Please open an issue on [GitHub Issues](https://gi
 2. **Install frontend dependencies:**
 
    ```bash
-   npm install
+   bun install
    ```
 
 3. **Run in development mode:**
 
    ```bash
-   npm run tauri dev
+   bun run tauri dev
    ```
 
 4. **Build for production:**
 
    ```bash
-   npm run tauri build
+   bun run tauri build
    ```
 
 ### Project Structure

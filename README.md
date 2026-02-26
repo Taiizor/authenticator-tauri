@@ -54,7 +54,7 @@ Download the latest installer for your platform from the [Releases](https://gith
 
 | Tool | Minimum Version |
 |------|-----------------|
-| [Node.js](https://nodejs.org/) | 18+ |
+| [Bun](https://bun.sh/) | 1.0+ |
 | [Rust](https://www.rust-lang.org/tools/install) | 1.70+ |
 | [protoc](https://grpc.io/docs/protoc-installation/) | 3.x |
 
@@ -66,10 +66,10 @@ git clone https://github.com/Taiizor/authenticator-tauri.git
 cd authenticator-tauri
 
 # Install frontend dependencies
-npm install
+bun install
 
 # Build the application
-npm run tauri build
+bun run tauri build
 ```
 
 The compiled binary and installer will be located in `src-tauri/target/release/bundle/`.
@@ -79,7 +79,7 @@ The compiled binary and installer will be located in `src-tauri/target/release/b
 Start the app in development mode with hot-reload:
 
 ```bash
-npm run tauri dev
+bun run tauri dev
 ```
 
 This launches the Vite dev server for the React frontend and the Tauri Rust backend simultaneously.
@@ -133,7 +133,7 @@ Authenticator is designed with a security-first architecture:
 | Keychain | [`keyring`](https://crates.io/crates/keyring) |
 | Drag & Drop | [`@dnd-kit`](https://dndkit.com/) |
 | i18n | [`i18next`](https://www.i18next.com/) + [`react-i18next`](https://react.i18next.com/) |
-| Build | [Vite](https://vite.dev/) |
+| Runtime & Build | [Bun](https://bun.sh/) + [Vite](https://vite.dev/) |
 
 ## Contributing
 
