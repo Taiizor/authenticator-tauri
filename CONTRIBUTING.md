@@ -13,7 +13,7 @@ Thank you for your interest in contributing to Authenticator! This guide will he
 
 ## Reporting Bugs
 
-If you find a bug, please open an issue on [GitHub Issues](https://github.com/Taiizor/Authenticator/issues) with the following information:
+If you find a bug, please open an issue on [GitHub Issues](https://github.com/Taiizor/authenticator-tauri/issues) with the following information:
 
 - A clear and descriptive title
 - Steps to reproduce the issue
@@ -26,7 +26,7 @@ Please search existing issues before creating a new one to avoid duplicates.
 
 ## Suggesting Features
 
-Feature requests are welcome! Please open an issue on [GitHub Issues](https://github.com/Taiizor/Authenticator/issues) and include:
+Feature requests are welcome! Please open an issue on [GitHub Issues](https://github.com/Taiizor/authenticator-tauri/issues) and include:
 
 - A clear and descriptive title
 - A detailed description of the proposed feature
@@ -46,8 +46,8 @@ Feature requests are welcome! Please open an issue on [GitHub Issues](https://gi
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/Taiizor/Authenticator.git
-   cd Authenticator
+   git clone https://github.com/Taiizor/authenticator-tauri.git
+   cd authenticator-tauri
    ```
 
 2. **Install frontend dependencies:**

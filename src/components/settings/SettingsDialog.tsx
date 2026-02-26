@@ -333,7 +333,7 @@ export default function SettingsDialog({
               <div className="flex items-center justify-between">
                 <Label>{t("settings_dialog.github")}</Label>
                 <span className="text-muted-foreground text-sm">
-                  github.com/aspect-authenticator
+                  github.com/Taiizor/authenticator-tauri
                 </span>
               </div>
             </div>
