@@ -1,0 +1,91 @@
+# ── Type ──────────────────────────────────────────
+- name: bug
+  color: "d73a4a"
+  description: Something isn't working
+
+- name: enhancement
+  color: "a2eeef"
+  description: New feature or improvement
+
+- name: documentation
+  color: "0075ca"
+  description: Documentation changes
+
+- name: question
+  color: "d876e3"
+  description: Needs clarification or discussion
+
+# ── Priority ──────────────────────────────────────
+- name: "priority: critical"
+  color: "b60205"
+  description: Must be fixed immediately
+
+- name: "priority: high"
+  color: "d93f0b"
+  description: Should be fixed soon
+
+- name: "priority: medium"
+  color: "fbca04"
+  description: Normal priority
+
+- name: "priority: low"
+  color: "0e8a16"
+  description: Nice to have
+
+# ── Area ──────────────────────────────────────────
+- name: frontend
+  color: "61dafb"
+  description: React / TypeScript / UI
+
+- name: backend
+  color: "dea584"
+  description: Rust / Tauri backend
+
+- name: security
+  color: "ee0701"
+  description: Encryption, vault, authentication
+
+- name: ci
+  color: "ededed"
+  description: CI/CD and GitHub Actions
+
+- name: i18n
+  color: "c5def5"
+  description: Internationalization and translations
+
+- name: ui/ux
+  color: "f9d0c4"
+  description: Design, layout, user experience
+
+- name: import/export
+  color: "bfd4f2"
+  description: Import, export, backup features
+
+- name: platform
+  color: "d4c5f9"
+  description: OS-specific (Windows, macOS, Linux)
+
+# ── Workflow ──────────────────────────────────────
+- name: dependencies
+  color: "0366d6"
+  description: Dependency updates
+
+- name: good first issue
+  color: "7057ff"
+  description: Good for newcomers
+
+- name: help wanted
+  color: "008672"
+  description: Extra attention is needed
+
+- name: wontfix
+  color: "ffffff"
+  description: Will not be worked on
+
+- name: duplicate
+  color: "cfd3d7"
+  description: Already exists
+
+- name: invalid
+  color: "e4e669"
+  description: Not valid or relevant
