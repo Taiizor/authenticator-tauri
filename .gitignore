@@ -23,6 +23,3 @@ bun.lock
 *.njsproj
 *.sln
 *.sw?
-
-# Local dev tools
-tauri-action-dev/
