@@ -30,15 +30,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-          - os: macos-latest
-            target: aarch64-apple-darwin
-          - os: macos-latest
-            target: x86_64-apple-darwin
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-    runs-on: ${{ matrix.os }}
+          - platform: windows-latest
+            args: ""
+          - platform: macos-latest
+            args: "--target aarch64-apple-darwin"
+          - platform: macos-latest
+            args: "--target x86_64-apple-darwin"
+          - platform: ubuntu-22.04
+            args: ""
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@v4
@@ -46,13 +46,13 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: lts/*
           cache: npm
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Install protoc
         uses: arduino/setup-protoc@v3
@@ -60,7 +60,7 @@ jobs:
           version: "25.x"
 
       - name: Install system dependencies (Linux)
-        if: runner.os == 'Linux'
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libdbus-1-dev libgtk-3-dev libsoup-3.0-dev libjavascriptcoregtk-4.1-dev
@@ -71,21 +71,21 @@ jobs:
       # --- Tagged release (v*) ---
       - name: Build & publish release
         if: github.ref_type == 'tag'
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: "Authenticator ${{ github.ref_name }}"
+          tagName: v__VERSION__
+          releaseName: "Authenticator v__VERSION__"
           releaseBody: "See the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
           releaseDraft: false
           prerelease: false
-          args: --target ${{ matrix.target }}
+          args: ${{ matrix.args }}
 
       # --- Nightly release (branch push) ---
       - name: Build & publish nightly
         if: github.ref_type != 'tag'
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -100,4 +100,4 @@ jobs:
             > This is an unstable development build. For production use, download a [versioned release](https://github.com/${{ github.repository }}/releases/latest) instead.
           releaseDraft: false
           prerelease: true
-          args: --target ${{ matrix.target }}
+          args: ${{ matrix.args }}
