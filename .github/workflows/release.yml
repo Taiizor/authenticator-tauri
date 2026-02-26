@@ -68,18 +68,18 @@ jobs:
           p.write_text(re.sub(r'^version = \".*\"', 'version = \"$VERSION\"', p.read_text(), count=1, flags=re.M))
           "
 
-      # --- Set dev version (1.0.0 → 1.0.0.14 for bundle, v1.0.0-dev.14 for tag) ---
+      # --- Set dev version (1.0.0 → 1.0.0-14 for bundle, v1.0.0-dev.14 for tag) ---
       - name: Set dev version
         if: github.ref_type != 'tag'
         shell: bash
         run: |
           BASE=$(jq -r '.version' src-tauri/tauri.conf.json)
           RUN=${{ github.run_number }}
-          # MSI requires numeric-only version (x.y.z.w), so use 1.0.0.14 for bundle
-          BUNDLE_VERSION="${BASE}.${RUN}"
+          # semver + MSI-compatible: numeric-only pre-release (1.0.0-14)
+          BUNDLE_VERSION="${BASE}-${RUN}"
           # Human-readable version for tag/release name
           echo "APP_VERSION=${BASE}-dev.${RUN}" >> $GITHUB_ENV
-          # Patch tauri.conf.json & package.json with MSI-compatible version
+          # Patch tauri.conf.json & package.json
           jq --arg v "$BUNDLE_VERSION" '.version = $v' src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
           jq --arg v "$BUNDLE_VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
 
