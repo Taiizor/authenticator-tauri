@@ -22,7 +22,7 @@ pub fn generate_totp(account: &Account) -> Result<CodeResponse, String> {
         .to_bytes()
         .map_err(|e| format!("Invalid secret: {}", e))?;
 
-    let totp = TOTP::new(
+    let totp = TOTP::new_unchecked(
         to_totp_algorithm(&account.algorithm),
         account.digits as usize,
         1, // skew
@@ -30,8 +30,7 @@ pub fn generate_totp(account: &Account) -> Result<CodeResponse, String> {
         secret_bytes,
         account.issuer.clone(),
         account.name.clone(),
-    )
-    .map_err(|e| format!("TOTP creation error: {}", e))?;
+    );
 
     let code = totp
         .generate_current()
@@ -69,7 +68,7 @@ pub fn validate_secret(secret: &str) -> bool {
 /// Parses an otpauth:// URI into an Account
 pub fn parse_otpauth_uri(uri: &str) -> Result<Account, String> {
     let totp =
-        TOTP::from_url(uri).map_err(|e| format!("Invalid otpauth URI: {}", e))?;
+        TOTP::from_url_unchecked(uri).map_err(|e| format!("Invalid otpauth URI: {}", e))?;
 
     let algorithm = match totp.algorithm {
         TotpAlgorithm::SHA1 => Algorithm::SHA1,
