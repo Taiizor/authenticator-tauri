@@ -57,8 +57,9 @@ function SortableAccountCard({
       id: account.id,
     });
 
+  const verticalOnly = transform ? { ...transform, x: 0 } : null;
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(verticalOnly),
     transition,
   };
 
