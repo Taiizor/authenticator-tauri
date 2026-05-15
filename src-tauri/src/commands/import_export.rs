@@ -116,7 +116,7 @@ pub fn import_from_file(
 }
 
 #[tauri::command]
-pub fn export_backup(
+pub async fn export_backup(
     _app: AppHandle,
     state: State<'_, Mutex<AppState>>,
     path: String,
@@ -137,7 +137,7 @@ pub fn export_backup(
 }
 
 #[tauri::command]
-pub fn import_backup(
+pub async fn import_backup(
     app: AppHandle,
     state: State<'_, Mutex<AppState>>,
     path: String,
@@ -169,7 +169,7 @@ pub fn import_backup(
 }
 
 #[tauri::command]
-pub fn export_plain(
+pub async fn export_plain(
     state: State<'_, Mutex<AppState>>,
     path: String,
     password: String,

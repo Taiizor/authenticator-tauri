@@ -19,7 +19,7 @@ pub fn is_vault_setup(app: AppHandle) -> bool {
 }
 
 #[tauri::command]
-pub fn setup_vault(
+pub async fn setup_vault(
     app: AppHandle,
     state: State<'_, Mutex<AppState>>,
     password: String,
@@ -45,7 +45,7 @@ pub fn setup_vault(
 }
 
 #[tauri::command]
-pub fn unlock_vault(
+pub async fn unlock_vault(
     app: AppHandle,
     state: State<'_, Mutex<AppState>>,
     password: String,
@@ -114,7 +114,7 @@ pub fn lock_vault(state: State<'_, Mutex<AppState>>) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn try_stored_password(
+pub async fn try_stored_password(
     app: AppHandle,
     state: State<'_, Mutex<AppState>>,
 ) -> Result<bool, String> {
@@ -160,7 +160,7 @@ pub fn try_stored_password(
 }
 
 #[tauri::command]
-pub fn change_password(
+pub async fn change_password(
     app: AppHandle,
     state: State<'_, Mutex<AppState>>,
     old_password: String,
