@@ -265,6 +265,7 @@ function App() {
             selected={selectedCategory}
             onSelect={setSelectedCategory}
             accountCounts={accountCounts}
+            totalCount={accounts.length}
           />
         )}
 

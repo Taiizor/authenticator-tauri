@@ -8,6 +8,7 @@ interface CategoryTabsProps {
   selected: string | null;
   onSelect: (category: string | null) => void;
   accountCounts?: Record<string, number>;
+  totalCount?: number;
 }
 
 export default function CategoryTabs({
@@ -15,12 +16,9 @@ export default function CategoryTabs({
   selected,
   onSelect,
   accountCounts,
+  totalCount,
 }: CategoryTabsProps) {
   const { t } = useTranslation();
-
-  const totalCount = accountCounts
-    ? Object.values(accountCounts).reduce((sum, count) => sum + count, 0)
-    : undefined;
 
   return (
     <ScrollArea className="w-full">
