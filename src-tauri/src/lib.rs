@@ -9,9 +9,11 @@ use zeroize::Zeroize;
 
 mod commands;
 mod crypto;
+mod export;
 mod import;
 mod models;
 mod otp;
+mod proto;
 mod state;
 mod storage;
 
@@ -84,6 +86,10 @@ pub fn run() {
             commands::import_export::export_backup,
             commands::import_export::import_backup,
             commands::import_export::export_plain,
+            commands::import_export::export_to_file,
+            commands::import_export::export_account_uri,
+            commands::import_export::export_account_qr,
+            commands::import_export::export_google_qr,
             update_tray_labels,
         ])
         .setup(|app| {

@@ -1,11 +1,8 @@
 use crate::models::account::{Account, Algorithm, OtpType};
+use crate::proto as migration_proto;
 use base32::Alphabet;
 use prost::Message;
 use std::time::{SystemTime, UNIX_EPOCH};
-
-mod migration_proto {
-    include!(concat!(env!("OUT_DIR"), "/migration.rs"));
-}
 
 /// Parses a Google Authenticator migration export.
 ///

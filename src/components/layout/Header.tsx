@@ -6,18 +6,20 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { Plus, Download, Settings, Lock } from "lucide-react";
+import { Plus, Download, Upload, Settings, Lock } from "lucide-react";
 
 interface HeaderProps {
   onAddAccount: () => void;
-  onImportExport: () => void;
+  onImport: () => void;
+  onExport: () => void;
   onSettings: () => void;
   onLock: () => void;
 }
 
 export default function Header({
   onAddAccount,
-  onImportExport,
+  onImport,
+  onExport,
   onSettings,
   onLock,
 }: HeaderProps) {
@@ -54,13 +56,27 @@ export default function Header({
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={onImportExport}
-                  aria-label={t("import_export.title")}
+                  onClick={onImport}
+                  aria-label={t("import_export.import")}
                 >
                   <Download className="size-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{t("import_export.title")}</TooltipContent>
+              <TooltipContent>{t("import_export.import")}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onExport}
+                  aria-label={t("import_export.export")}
+                >
+                  <Upload className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t("import_export.export")}</TooltipContent>
             </Tooltip>
 
             <Tooltip>

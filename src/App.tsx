@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { listen } from "@tauri-apps/api/event";
+import { save } from "@tauri-apps/plugin-dialog";
 import { Toaster, toast } from "sonner";
 
 import { api } from "@/lib/tauri";
@@ -177,6 +178,45 @@ function App() {
     setAddEditOpen(true);
   }, []);
 
+  const handleCopyUri = useCallback(
+    async (account: AccountView) => {
+      try {
+        const uri = await api.exportAccountUri(account.id);
+        await navigator.clipboard.writeText(uri);
+        toast.success(t("import_export.uri_copied"));
+      } catch (err) {
+        toast.error(
+          t("import_export.export_error", {
+            error: err instanceof Error ? err.message : String(err),
+          })
+        );
+      }
+    },
+    [t]
+  );
+
+  const handleSaveQr = useCallback(
+    async (account: AccountView) => {
+      try {
+        const safeName = account.name.replace(/[^A-Za-z0-9._-]+/g, "_");
+        const path = await save({
+          defaultPath: `${safeName || "account"}.png`,
+          filters: [{ name: "PNG", extensions: ["png"] }],
+        });
+        if (!path) return;
+        await api.exportAccountQr(account.id, path);
+        toast.success(t("import_export.qr_saved"));
+      } catch (err) {
+        toast.error(
+          t("import_export.export_error", {
+            error: err instanceof Error ? err.message : String(err),
+          })
+        );
+      }
+    },
+    [t]
+  );
+
   const handleDelete = useCallback((account: AccountView) => {
     setDeleteAccount(account);
   }, []);
@@ -251,7 +291,8 @@ function App() {
           setEditAccount(null);
           setAddEditOpen(true);
         }}
-        onImportExport={() => setImportOpen(true)}
+        onImport={() => setImportOpen(true)}
+        onExport={() => setExportOpen(true)}
         onSettings={() => setSettingsOpen(true)}
         onLock={handleLock}
       />
@@ -275,6 +316,8 @@ function App() {
           onCopy={handleCopy}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onCopyUri={handleCopyUri}
+          onSaveQr={handleSaveQr}
           onIncrementHotp={incrementHotp}
           onReorder={handleReorder}
         />

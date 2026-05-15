@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Copy, MoreVertical, Pencil, Trash2, RefreshCw } from "lucide-react";
+import { Copy, Link2, MoreVertical, Pencil, QrCode, Trash2, RefreshCw } from "lucide-react";
 import type { AccountView, CodeResponse } from "@/types";
 
 interface AccountCardProps {
@@ -19,6 +19,8 @@ interface AccountCardProps {
   onCopy: (code: string) => void;
   onEdit: (account: AccountView) => void;
   onDelete: (account: AccountView) => void;
+  onCopyUri: (account: AccountView) => void;
+  onSaveQr: (account: AccountView) => void;
   onIncrementHotp?: (id: string) => void;
 }
 
@@ -33,6 +35,8 @@ export default function AccountCard({
   onCopy,
   onEdit,
   onDelete,
+  onCopyUri,
+  onSaveQr,
   onIncrementHotp,
 }: AccountCardProps) {
   const { t } = useTranslation();
@@ -123,6 +127,15 @@ export default function AccountCard({
             <DropdownMenuItem onClick={() => code && onCopy(code.code)}>
               <Copy />
               {t("copy_code")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onCopyUri(account)}>
+              <Link2 />
+              {t("import_export.export_uri_action")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onSaveQr(account)}>
+              <QrCode />
+              {t("import_export.export_qr_action")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

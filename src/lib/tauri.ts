@@ -70,6 +70,14 @@ export const api = {
     invoke<AccountView[]>("import_backup", { path, password }),
   exportPlain: (path: string, password: string) =>
     invoke<boolean>("export_plain", { path, password }),
+  exportToFile: (path: string, format: string) =>
+    invoke<boolean>("export_to_file", { path, format }),
+  exportAccountUri: (id: string) =>
+    invoke<string>("export_account_uri", { id }),
+  exportAccountQr: (id: string, path: string) =>
+    invoke<boolean>("export_account_qr", { id, path }),
+  exportGoogleQr: (dir: string, prefix: string) =>
+    invoke<string[]>("export_google_qr", { dir, prefix }),
 
   // Tray
   updateTrayLabels: (openLabel: string, lockLabel: string, quitLabel: string) =>

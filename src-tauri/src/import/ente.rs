@@ -18,6 +18,13 @@ struct EnteItem {
     period: Option<u32>,
     algorithm: Option<String>,
     counter: Option<u64>,
+    // Custom round-trip extensions (ignored by official Ente Auth).
+    #[serde(default)]
+    color: Option<String>,
+    #[serde(default)]
+    icon: Option<String>,
+    #[serde(default)]
+    category: Option<String>,
 }
 
 /// Parses an Ente Auth JSON export into a list of Accounts.
@@ -94,9 +101,9 @@ fn parse_ente_items(items: &[EnteItem]) -> Result<Vec<Account>, String> {
             period: item.period.unwrap_or(30),
             algorithm,
             counter,
-            category: None,
-            icon: None,
-            color: None,
+            category: item.category.clone(),
+            icon: item.icon.clone(),
+            color: item.color.clone(),
             sort_order: accounts.len() as i32,
             created_at: now,
         };

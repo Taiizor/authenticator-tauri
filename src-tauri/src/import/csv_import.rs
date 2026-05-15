@@ -33,6 +33,9 @@ pub fn parse_csv(data: &[u8]) -> Result<Vec<Account>, String> {
     let col_algorithm = find_column(&headers, "algorithm");
     let col_issuer = find_column(&headers, "issuer");
     let col_counter = find_column(&headers, "counter");
+    let col_category = find_column(&headers, "category");
+    let col_icon = find_column(&headers, "icon");
+    let col_color = find_column(&headers, "color");
 
     // name and secret columns are required
     let col_name =
@@ -108,9 +111,9 @@ pub fn parse_csv(data: &[u8]) -> Result<Vec<Account>, String> {
             period,
             algorithm,
             counter,
-            category: None,
-            icon: None,
-            color: None,
+            category: get_field(&record, col_category),
+            icon: get_field(&record, col_icon),
+            color: get_field(&record, col_color),
             sort_order: accounts.len() as i32,
             created_at: now,
         };

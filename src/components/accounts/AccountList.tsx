@@ -27,6 +27,8 @@ interface AccountListProps {
   onCopy: (code: string) => void;
   onEdit: (account: AccountView) => void;
   onDelete: (account: AccountView) => void;
+  onCopyUri: (account: AccountView) => void;
+  onSaveQr: (account: AccountView) => void;
   onIncrementHotp: (id: string) => void;
   onReorder: (ids: string[]) => void;
 }
@@ -37,6 +39,8 @@ function SortableAccountCard({
   onCopy,
   onEdit,
   onDelete,
+  onCopyUri,
+  onSaveQr,
   onIncrementHotp,
 }: {
   account: AccountView;
@@ -44,6 +48,8 @@ function SortableAccountCard({
   onCopy: (code: string) => void;
   onEdit: (account: AccountView) => void;
   onDelete: (account: AccountView) => void;
+  onCopyUri: (account: AccountView) => void;
+  onSaveQr: (account: AccountView) => void;
   onIncrementHotp?: (id: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -64,6 +70,8 @@ function SortableAccountCard({
         onCopy={onCopy}
         onEdit={onEdit}
         onDelete={onDelete}
+        onCopyUri={onCopyUri}
+        onSaveQr={onSaveQr}
         onIncrementHotp={onIncrementHotp}
       />
     </div>
@@ -76,6 +84,8 @@ export default function AccountList({
   onCopy,
   onEdit,
   onDelete,
+  onCopyUri,
+  onSaveQr,
   onIncrementHotp,
   onReorder,
 }: AccountListProps) {
@@ -135,6 +145,8 @@ export default function AccountList({
                 onCopy={onCopy}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                onCopyUri={onCopyUri}
+                onSaveQr={onSaveQr}
                 onIncrementHotp={onIncrementHotp}
               />
             ))}

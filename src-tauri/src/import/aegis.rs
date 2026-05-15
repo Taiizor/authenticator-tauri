@@ -20,6 +20,11 @@ struct AegisEntry {
     issuer: Option<String>,
     group: Option<String>,
     info: AegisInfo,
+    // Custom round-trip extensions (ignored by official Aegis).
+    #[serde(default)]
+    color: Option<String>,
+    #[serde(default, rename = "icon_name")]
+    icon_name: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -84,8 +89,8 @@ pub fn parse_aegis(data: &[u8]) -> Result<Vec<Account>, String> {
             algorithm,
             counter,
             category: entry.group,
-            icon: None,
-            color: None,
+            icon: entry.icon_name,
+            color: entry.color,
             sort_order: accounts.len() as i32,
             created_at: now,
         };

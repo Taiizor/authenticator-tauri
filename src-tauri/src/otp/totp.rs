@@ -65,6 +65,58 @@ pub fn validate_secret(secret: &str) -> bool {
     Secret::Encoded(cleaned).to_bytes().is_ok()
 }
 
+/// Returns the canonical algorithm string used in otpauth:// URIs.
+pub fn algorithm_str(algo: &Algorithm) -> &'static str {
+    match algo {
+        Algorithm::SHA1 => "SHA1",
+        Algorithm::SHA256 => "SHA256",
+        Algorithm::SHA512 => "SHA512",
+    }
+}
+
+/// Builds an otpauth:// URI from an Account.
+/// Format follows the Key URI Format spec:
+/// <https://github.com/google/google-authenticator/wiki/Key-Uri-Format>
+pub fn account_to_otpauth_uri(account: &Account) -> String {
+    let scheme = match account.otp_type {
+        OtpType::Totp => "totp",
+        OtpType::Hotp => "hotp",
+    };
+
+    let label = match &account.issuer {
+        Some(issuer) if !issuer.is_empty() => format!(
+            "{}:{}",
+            urlencoding::encode(issuer),
+            urlencoding::encode(&account.name)
+        ),
+        _ => urlencoding::encode(&account.name).into_owned(),
+    };
+
+    let secret = account.secret.replace(' ', "").to_uppercase();
+    let mut params = vec![
+        format!("secret={}", secret),
+        format!("algorithm={}", algorithm_str(&account.algorithm)),
+        format!("digits={}", account.digits),
+    ];
+
+    if let Some(issuer) = &account.issuer {
+        if !issuer.is_empty() {
+            params.push(format!("issuer={}", urlencoding::encode(issuer)));
+        }
+    }
+
+    match account.otp_type {
+        OtpType::Totp => {
+            params.push(format!("period={}", account.period));
+        }
+        OtpType::Hotp => {
+            params.push(format!("counter={}", account.counter.unwrap_or(0)));
+        }
+    }
+
+    format!("otpauth://{}/{}?{}", scheme, label, params.join("&"))
+}
+
 /// Normalizes the `secret` query parameter in an otpauth:// URI.
 /// Base32 is case-insensitive per RFC 4648, but `totp-rs` requires upper-case,
 /// non-padded input. Some providers (e.g. Google) emit lower-case secrets,

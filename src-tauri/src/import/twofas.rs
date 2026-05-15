@@ -17,6 +17,11 @@ struct TwoFasService {
     otp: TwoFasOtp,
     #[serde(rename = "groupId")]
     group_id: Option<String>,
+    // Custom round-trip extensions (ignored by official 2FAS).
+    #[serde(default)]
+    color: Option<String>,
+    #[serde(default, rename = "iconName")]
+    icon_name: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -107,8 +112,8 @@ pub fn parse_twofas(data: &[u8]) -> Result<Vec<Account>, String> {
             algorithm,
             counter,
             category,
-            icon: None,
-            color: None,
+            icon: service.icon_name,
+            color: service.color,
             sort_order: accounts.len() as i32,
             created_at: now,
         };
