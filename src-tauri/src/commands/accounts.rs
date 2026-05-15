@@ -6,7 +6,6 @@ use tauri::{AppHandle, State};
 use crate::models::account::{Account, AccountView, Algorithm, OtpType};
 use crate::otp::totp;
 use crate::state::AppState;
-use crate::storage::vault;
 
 #[tauri::command]
 pub fn get_accounts(state: State<'_, Mutex<AppState>>) -> Result<Vec<AccountView>, String> {
@@ -82,11 +81,7 @@ pub fn add_account(
     let view = account.to_view();
     s.accounts.push(account);
 
-    let password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &password)?;
+    s.persist(&app)?;
 
     Ok(view)
 }
@@ -136,11 +131,7 @@ pub fn update_account(
 
     let view = account.to_view();
 
-    let password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &password)?;
+    s.persist(&app)?;
 
     Ok(view)
 }
@@ -164,11 +155,7 @@ pub fn delete_account(
         return Ok(false); // Account not found
     }
 
-    let password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &password)?;
+    s.persist(&app)?;
 
     Ok(true)
 }
@@ -191,11 +178,7 @@ pub fn reorder_accounts(
         }
     }
 
-    let password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &password)?;
+    s.persist(&app)?;
 
     Ok(true)
 }

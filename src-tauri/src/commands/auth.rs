@@ -1,11 +1,17 @@
 use std::sync::Mutex;
 
+use rand::Rng;
 use tauri::{AppHandle, State};
-use zeroize::Zeroize;
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::crypto::keychain;
+use crate::crypto::vault::{
+    decrypt_vault_with_key, derive_key, encrypt_vault_with_key, extract_salt,
+};
 use crate::state::AppState;
 use crate::storage::vault;
+
+const SALT_LEN: usize = 16;
 
 #[tauri::command]
 pub fn is_vault_setup(app: AppHandle) -> bool {
@@ -18,13 +24,21 @@ pub fn setup_vault(
     state: State<'_, Mutex<AppState>>,
     password: String,
 ) -> Result<(), String> {
+    let password = Zeroizing::new(password);
+
+    // Generate a fresh salt and derive the vault key once.
+    let mut salt = [0u8; SALT_LEN];
+    rand::rng().fill_bytes(&mut salt);
+    let key = derive_key(&password, &salt)?;
+
+    // Persist an empty vault encrypted with the new key.
+    let blob = encrypt_vault_with_key(&[], &key, &salt)?;
+    vault::save_vault_blob(&app, &blob)?;
+
     let mut s = state.lock().map_err(|_| "State lock failed".to_string())?;
-
-    // Create a new empty vault with the given password
-    vault::save_vault(&app, &[], &password)?;
-
     s.accounts = Vec::new();
-    s.password = Some(password);
+    s.vault_key = Some(key);
+    s.vault_salt = Some(salt);
     s.unlocked = true;
 
     Ok(())
@@ -36,21 +50,37 @@ pub fn unlock_vault(
     state: State<'_, Mutex<AppState>>,
     password: String,
 ) -> Result<bool, String> {
-    let loaded = match vault::load_vault(&app, &password) {
+    let password = Zeroizing::new(password);
+
+    let blob = match vault::read_vault_blob(&app) {
+        Ok(b) => b,
+        Err(_) => return Ok(false),
+    };
+
+    let salt = match extract_salt(&blob) {
+        Ok(s) => s,
+        Err(_) => return Ok(false),
+    };
+    let key = derive_key(&password, &salt)?;
+
+    let loaded = match decrypt_vault_with_key(&blob, &key) {
         Ok(accounts) => accounts,
         Err(_) => {
-            // Decryption failed — wrong password
+            // Wrong password — zero out the bogus key and bail.
+            let mut k = key;
+            k.zeroize();
             return Ok(false);
         }
     };
 
     let mut s = state.lock().map_err(|_| "State lock failed".to_string())?;
     s.accounts = loaded;
-    s.password = Some(password.clone());
+    s.vault_key = Some(key);
+    s.vault_salt = Some(salt);
     s.unlocked = true;
     drop(s);
 
-    // Store password in keychain if remember_password is enabled
+    // Store password in keychain if remember_password is enabled.
     if let Ok(settings) = vault::load_settings(&app) {
         if settings.remember_password {
             let _ = keychain::store_password(&password);
@@ -64,16 +94,20 @@ pub fn unlock_vault(
 pub fn lock_vault(state: State<'_, Mutex<AppState>>) -> Result<(), String> {
     let mut s = state.lock().map_err(|_| "State lock failed".to_string())?;
 
-    // Zeroize sensitive data before dropping
+    // Zeroize sensitive in-memory material before dropping it.
     for account in &mut s.accounts {
         account.secret.zeroize();
     }
-    if let Some(ref mut pwd) = s.password {
-        pwd.zeroize();
+    if let Some(ref mut key) = s.vault_key {
+        key.zeroize();
+    }
+    if let Some(ref mut salt) = s.vault_salt {
+        salt.zeroize();
     }
 
     s.accounts.clear();
-    s.password = None;
+    s.vault_key = None;
+    s.vault_salt = None;
     s.unlocked = false;
 
     Ok(())
@@ -84,23 +118,33 @@ pub fn try_stored_password(
     app: AppHandle,
     state: State<'_, Mutex<AppState>>,
 ) -> Result<bool, String> {
-    // Check if remember_password is enabled
     let settings = vault::load_settings(&app).unwrap_or_default();
     if !settings.remember_password {
         return Ok(false);
     }
 
-    // Try to retrieve password from keychain
     let password = match keychain::retrieve_password() {
-        Ok(Some(p)) => p,
+        Ok(Some(p)) => Zeroizing::new(p),
         _ => return Ok(false),
     };
 
-    // Try to unlock with the stored password
-    let loaded = match vault::load_vault(&app, &password) {
+    let blob = match vault::read_vault_blob(&app) {
+        Ok(b) => b,
+        Err(_) => return Ok(false),
+    };
+
+    let salt = match extract_salt(&blob) {
+        Ok(s) => s,
+        Err(_) => return Ok(false),
+    };
+    let key = derive_key(&password, &salt)?;
+
+    let loaded = match decrypt_vault_with_key(&blob, &key) {
         Ok(accounts) => accounts,
         Err(_) => {
-            // Stored password is stale, clear it
+            // Stored password is stale — drop key and clear keychain entry.
+            let mut k = key;
+            k.zeroize();
             let _ = keychain::clear_password();
             return Ok(false);
         }
@@ -108,7 +152,8 @@ pub fn try_stored_password(
 
     let mut s = state.lock().map_err(|_| "State lock failed".to_string())?;
     s.accounts = loaded;
-    s.password = Some(password);
+    s.vault_key = Some(key);
+    s.vault_salt = Some(salt);
     s.unlocked = true;
 
     Ok(true)
@@ -121,19 +166,42 @@ pub fn change_password(
     old_password: String,
     new_password: String,
 ) -> Result<bool, String> {
-    // Verify old password by attempting to decrypt
-    match vault::load_vault(&app, &old_password) {
-        Ok(_) => {} // password verified
-        Err(_) => return Ok(false),
-    };
+    let old_password = Zeroizing::new(old_password);
+    let new_password = Zeroizing::new(new_password);
 
-    // Lock state and re-encrypt in-memory accounts with new password
+    // Verify the old password against the on-disk blob.
+    let blob = vault::read_vault_blob(&app)?;
+    let old_salt = extract_salt(&blob)?;
+    let old_key = derive_key(&old_password, &old_salt)?;
+    if decrypt_vault_with_key(&blob, &old_key).is_err() {
+        let mut k = old_key;
+        k.zeroize();
+        return Ok(false);
+    }
+    let mut old_key_zeroize = old_key;
+    old_key_zeroize.zeroize();
+
+    // Lock state, derive a fresh key under a new salt, re-encrypt, swap state.
     let mut s = state.lock().map_err(|_| "State lock failed".to_string())?;
-    vault::save_vault(&app, &s.accounts, &new_password)?;
-    s.password = Some(new_password.clone());
+
+    let mut new_salt = [0u8; SALT_LEN];
+    rand::rng().fill_bytes(&mut new_salt);
+    let new_key = derive_key(&new_password, &new_salt)?;
+
+    let new_blob = encrypt_vault_with_key(&s.accounts, &new_key, &new_salt)?;
+    vault::save_vault_blob(&app, &new_blob)?;
+
+    if let Some(ref mut k) = s.vault_key {
+        k.zeroize();
+    }
+    if let Some(ref mut salt) = s.vault_salt {
+        salt.zeroize();
+    }
+    s.vault_key = Some(new_key);
+    s.vault_salt = Some(new_salt);
     drop(s);
 
-    // Update keychain if remember_password is enabled
+    // Keep the keychain entry in sync with the user's preference.
     if let Ok(settings) = vault::load_settings(&app) {
         if settings.remember_password {
             let _ = keychain::store_password(&new_password);

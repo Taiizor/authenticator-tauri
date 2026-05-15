@@ -133,11 +133,15 @@ pub fn run() {
                                 for account in &mut s.accounts {
                                     account.secret.zeroize();
                                 }
-                                if let Some(ref mut pwd) = s.password {
-                                    pwd.zeroize();
+                                if let Some(ref mut key) = s.vault_key {
+                                    key.zeroize();
+                                }
+                                if let Some(ref mut salt) = s.vault_salt {
+                                    salt.zeroize();
                                 }
                                 s.accounts.clear();
-                                s.password = None;
+                                s.vault_key = None;
+                                s.vault_salt = None;
                                 s.unlocked = false;
                             }
                             // Emit event to frontend so UI reflects the locked state

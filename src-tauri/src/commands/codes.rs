@@ -6,7 +6,6 @@ use crate::models::account::{CodeResponse, OtpType};
 use crate::otp::hotp;
 use crate::otp::totp;
 use crate::state::AppState;
-use crate::storage::vault;
 
 #[tauri::command]
 pub fn get_all_codes(state: State<'_, Mutex<AppState>>) -> Result<Vec<CodeResponse>, String> {
@@ -60,11 +59,7 @@ pub fn increment_hotp(
     // Generate the new code with the incremented counter
     let code = hotp::generate_hotp(account)?;
 
-    let password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &password)?;
+    s.persist(&app)?;
 
     Ok(code)
 }

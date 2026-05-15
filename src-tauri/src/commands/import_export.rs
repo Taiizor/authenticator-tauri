@@ -3,14 +3,15 @@ use std::path::Path;
 use std::sync::Mutex;
 
 use tauri::{AppHandle, State};
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::crypto::backup;
+use crate::crypto::vault::derive_key;
 use crate::export;
 use crate::import;
 use crate::models::account::AccountView;
 use crate::otp::totp::{account_to_otpauth_uri, parse_otpauth_uri};
 use crate::state::AppState;
-use crate::storage::vault;
 
 #[tauri::command]
 pub fn import_from_uri(
@@ -32,11 +33,7 @@ pub fn import_from_uri(
     let view = account.to_view();
     s.accounts.push(account);
 
-    let password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &password)?;
+    s.persist(&app)?;
 
     Ok(view)
 }
@@ -75,11 +72,7 @@ pub fn import_from_qr_image(
     let views: Vec<AccountView> = new_accounts.iter().map(|a| a.to_view()).collect();
     s.accounts.extend(new_accounts);
 
-    let password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &password)?;
+    s.persist(&app)?;
 
     Ok(views)
 }
@@ -117,11 +110,7 @@ pub fn import_from_file(
     let views: Vec<AccountView> = new_accounts.iter().map(|a| a.to_view()).collect();
     s.accounts.extend(new_accounts);
 
-    let password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &password)?;
+    s.persist(&app)?;
 
     Ok(views)
 }
@@ -174,11 +163,7 @@ pub fn import_backup(
     let views: Vec<AccountView> = restored_accounts.iter().map(|a| a.to_view()).collect();
     s.accounts.extend(restored_accounts);
 
-    let vault_password = s
-        .password
-        .clone()
-        .ok_or_else(|| "No password set".to_string())?;
-    vault::save_vault(&app, &s.accounts, &vault_password)?;
+    s.persist(&app)?;
 
     Ok(views)
 }
@@ -195,11 +180,25 @@ pub fn export_plain(
         return Err("Vault is locked".to_string());
     }
 
-    let current_password = s
-        .password
-        .as_deref()
-        .ok_or_else(|| "No password set".to_string())?;
-    if password != current_password {
+    // Verify the supplied password by re-deriving the key under the cached
+    // salt and comparing against the cached key in constant time.
+    let password = Zeroizing::new(password);
+    let salt = s
+        .vault_salt
+        .as_ref()
+        .ok_or_else(|| "Vault is locked".to_string())?;
+    let cached_key = s
+        .vault_key
+        .as_ref()
+        .ok_or_else(|| "Vault is locked".to_string())?;
+    let mut provided_key = derive_key(&password, salt)?;
+    let mut diff: u8 = 0;
+    for (a, b) in provided_key.iter().zip(cached_key.iter()) {
+        diff |= a ^ b;
+    }
+    let valid = diff == 0;
+    provided_key.zeroize();
+    if !valid {
         return Err("Invalid password".to_string());
     }
 

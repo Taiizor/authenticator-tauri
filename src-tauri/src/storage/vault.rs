@@ -3,8 +3,6 @@ use std::path::PathBuf;
 
 use tauri::{AppHandle, Manager};
 
-use crate::crypto::vault::{decrypt_vault, encrypt_vault};
-use crate::models::account::Account;
 use crate::models::settings::AppSettings;
 
 /// Returns the path to the encrypted vault file: `{app_data_dir}/vault.enc`
@@ -28,14 +26,11 @@ pub fn vault_exists(app: &AppHandle) -> bool {
     vault_path(app).exists()
 }
 
-/// Encrypts and saves the list of accounts to the vault file.
+/// Atomically writes a raw vault blob (already encrypted) to disk.
 ///
-/// Creates parent directories if they do not exist.
-pub fn save_vault(
-    app: &AppHandle,
-    accounts: &[Account],
-    password: &str,
-) -> Result<(), String> {
+/// Creates parent directories if they do not exist and writes via a temp file
+/// + rename so a partial write cannot corrupt the existing vault.
+pub fn save_vault_blob(app: &AppHandle, blob: &[u8]) -> Result<(), String> {
     let path = vault_path(app);
 
     if let Some(parent) = path.parent() {
@@ -43,11 +38,8 @@ pub fn save_vault(
             .map_err(|e| format!("Failed to create vault directory: {}", e))?;
     }
 
-    let encrypted =
-        encrypt_vault(accounts, password)?;
-
     let temp_path = path.with_extension("tmp");
-    fs::write(&temp_path, &encrypted)
+    fs::write(&temp_path, blob)
         .map_err(|e| format!("Failed to write vault file: {}", e))?;
     fs::rename(&temp_path, &path)
         .map_err(|e| format!("Failed to finalize vault file: {}", e))?;
@@ -55,19 +47,10 @@ pub fn save_vault(
     Ok(())
 }
 
-/// Loads and decrypts the vault file, returning the list of accounts.
-///
-/// Returns an error if the file does not exist or decryption fails.
-pub fn load_vault(
-    app: &AppHandle,
-    password: &str,
-) -> Result<Vec<Account>, String> {
+/// Reads the raw encrypted vault blob from disk.
+pub fn read_vault_blob(app: &AppHandle) -> Result<Vec<u8>, String> {
     let path = vault_path(app);
-
-    let encrypted = fs::read(&path)
-        .map_err(|e| format!("Failed to read vault file: {}", e))?;
-
-    decrypt_vault(&encrypted, password)
+    fs::read(&path).map_err(|e| format!("Failed to read vault file: {}", e))
 }
 
 /// Saves application settings as pretty-printed JSON.
