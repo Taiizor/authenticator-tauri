@@ -8,6 +8,10 @@ import {
   DragEndEvent,
 } from "@dnd-kit/core";
 import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -57,9 +61,8 @@ function SortableAccountCard({
       id: account.id,
     });
 
-  const verticalOnly = transform ? { ...transform, x: 0 } : null;
   const style = {
-    transform: CSS.Transform.toString(verticalOnly),
+    transform: CSS.Transform.toString(transform),
     transition,
   };
 
@@ -131,6 +134,7 @@ export default function AccountList({
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
         onDragEnd={handleDragEnd}
       >
         <SortableContext
