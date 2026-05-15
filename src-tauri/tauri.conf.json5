@@ -20,7 +20,10 @@
         "minHeight": 500,
         "center": true,
         "decorations": true,
-        "resizable": true
+        "resizable": true,
+        // Matches the app's dark background (zinc-950) so the WebView2
+        // boot frame doesn't flash white before the React UI mounts.
+        "backgroundColor": "#09090b"
       }
     ],
     "security": {
