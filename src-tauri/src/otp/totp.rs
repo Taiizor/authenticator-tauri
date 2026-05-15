@@ -65,10 +65,37 @@ pub fn validate_secret(secret: &str) -> bool {
     Secret::Encoded(cleaned).to_bytes().is_ok()
 }
 
+/// Normalizes the `secret` query parameter in an otpauth:// URI.
+/// Base32 is case-insensitive per RFC 4648, but `totp-rs` requires upper-case,
+/// non-padded input. Some providers (e.g. Google) emit lower-case secrets,
+/// and users sometimes paste secrets with spaces or padding.
+fn normalize_otpauth_uri(uri: &str) -> String {
+    let Some(q_idx) = uri.find('?') else {
+        return uri.to_string();
+    };
+    let (base, query) = uri.split_at(q_idx + 1);
+    let normalized: Vec<String> = query
+        .split('&')
+        .map(|param| match param.split_once('=') {
+            Some((key, value)) if key.eq_ignore_ascii_case("secret") => {
+                let cleaned: String = value
+                    .chars()
+                    .filter(|c| !c.is_whitespace() && *c != '=')
+                    .collect::<String>()
+                    .to_uppercase();
+                format!("{}={}", key, cleaned)
+            }
+            _ => param.to_string(),
+        })
+        .collect();
+    format!("{}{}", base, normalized.join("&"))
+}
+
 /// Parses an otpauth:// URI into an Account
 pub fn parse_otpauth_uri(uri: &str) -> Result<Account, String> {
-    let totp =
-        TOTP::from_url_unchecked(uri).map_err(|e| format!("Invalid otpauth URI: {}", e))?;
+    let normalized = normalize_otpauth_uri(uri);
+    let totp = TOTP::from_url_unchecked(&normalized)
+        .map_err(|e| format!("Invalid otpauth URI: {}", e))?;
 
     let algorithm = match totp.algorithm {
         TotpAlgorithm::SHA1 => Algorithm::SHA1,
