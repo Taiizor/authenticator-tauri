@@ -46,6 +46,9 @@ fn update_tray_labels(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    if let Err(e) = crypto::keychain::init() {
+        eprintln!("Warning: failed to initialize keychain: {}", e);
+    }
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_clipboard_manager::init())

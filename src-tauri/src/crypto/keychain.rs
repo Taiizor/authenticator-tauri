@@ -1,7 +1,13 @@
-use keyring::Entry;
+use keyring_core::{Entry, Error};
 
 const SERVICE_NAME: &str = "authenticator";
 const USERNAME: &str = "master-key";
+
+/// Initialize the default platform-native credential store. Must be called once at startup
+/// before any other function in this module.
+pub fn init() -> Result<(), String> {
+    keyring::use_native_store(false).map_err(|e| format!("Keyring init error: {}", e))
+}
 
 /// Store password in platform keychain
 pub fn store_password(password: &str) -> Result<(), String> {
@@ -19,7 +25,7 @@ pub fn retrieve_password() -> Result<Option<String>, String> {
         .map_err(|e| format!("Keyring entry error: {}", e))?;
     match entry.get_password() {
         Ok(password) => Ok(Some(password)),
-        Err(keyring::Error::NoEntry) => Ok(None),
+        Err(Error::NoEntry) => Ok(None),
         Err(e) => Err(format!("Failed to retrieve password: {}", e)),
     }
 }
@@ -30,7 +36,7 @@ pub fn clear_password() -> Result<(), String> {
         .map_err(|e| format!("Keyring entry error: {}", e))?;
     match entry.delete_credential() {
         Ok(()) => Ok(()),
-        Err(keyring::Error::NoEntry) => Ok(()), // Already cleared
+        Err(Error::NoEntry) => Ok(()), // Already cleared
         Err(e) => Err(format!("Failed to clear password: {}", e)),
     }
 }
