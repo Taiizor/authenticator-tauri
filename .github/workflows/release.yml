@@ -87,7 +87,7 @@ jobs:
       # --- Stable release (v* tag) ---
       - name: Build & publish release
         if: github.ref_type == 'tag'
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -102,7 +102,7 @@ jobs:
       # --- Dev release (branch push) ---
       - name: Build & publish dev build
         if: github.ref_type != 'tag'
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
