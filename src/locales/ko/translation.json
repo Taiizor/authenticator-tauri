@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "로딩 중...",
   "search_placeholder": "계정 검색...",
   "add_account": "계정 추가",
   "edit_account": "계정 편집",

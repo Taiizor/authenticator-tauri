@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "Зареждане...",
   "search_placeholder": "Търсене на акаунти...",
   "add_account": "Добавяне на акаунт",
   "edit_account": "Редактиране на акаунт",

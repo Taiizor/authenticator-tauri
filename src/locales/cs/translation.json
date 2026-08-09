@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "Načítání...",
   "search_placeholder": "Hledat účty...",
   "add_account": "Přidat účet",
   "edit_account": "Upravit účet",

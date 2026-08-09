@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "加载中...",
   "search_placeholder": "搜索账户...",
   "add_account": "添加账户",
   "edit_account": "编辑账户",

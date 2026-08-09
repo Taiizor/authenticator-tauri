@@ -18,4 +18,30 @@ export default defineConfig({
       ignored: ["**/src-tauri/**"],
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "vendor-react";
+            }
+            if (id.includes("@tauri-apps")) {
+              return "vendor-tauri";
+            }
+            if (id.includes("i18next")) {
+              return "vendor-i18n";
+            }
+            if (id.includes("@dnd-kit")) {
+              return "vendor-dnd";
+            }
+            if (id.includes("lucide-react")) {
+              return "vendor-icons";
+            }
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
 });

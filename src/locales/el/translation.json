@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "Φόρτωση...",
   "search_placeholder": "Αναζήτηση λογαριασμών...",
   "add_account": "Προσθήκη λογαριασμού",
   "edit_account": "Επεξεργασία λογαριασμού",

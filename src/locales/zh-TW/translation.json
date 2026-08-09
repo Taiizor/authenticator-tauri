@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "載入中...",
   "search_placeholder": "搜尋帳戶...",
   "add_account": "新增帳戶",
   "edit_account": "編輯帳戶",

@@ -260,7 +260,9 @@ function App() {
   if (screen === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+        <div className="animate-pulse text-muted-foreground">
+          {t("loading", { defaultValue: "Loading..." })}
+        </div>
       </div>
     );
   }

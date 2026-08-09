@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "Đang tải...",
   "search_placeholder": "Tìm kiếm tài khoản...",
   "add_account": "Thêm tài khoản",
   "edit_account": "Chỉnh sửa tài khoản",

@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "Ladataan...",
   "search_placeholder": "Hae tilejä...",
   "add_account": "Lisää tili",
   "edit_account": "Muokkaa tiliä",

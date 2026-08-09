@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "Učitavanje...",
   "search_placeholder": "Pretraži račune...",
   "add_account": "Dodaj račun",
   "edit_account": "Uredi račun",

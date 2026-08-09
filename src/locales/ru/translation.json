@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "Загрузка...",
   "search_placeholder": "Поиск аккаунтов...",
   "add_account": "Добавить аккаунт",
   "edit_account": "Редактировать аккаунт",

@@ -1,5 +1,6 @@
 {
   "app_name": "Authenticator",
+  "loading": "Memuat...",
   "search_placeholder": "Cari akun...",
   "add_account": "Tambah Akun",
   "edit_account": "Edit Akun",
