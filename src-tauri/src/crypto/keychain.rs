@@ -1,4 +1,4 @@
-use keyring_core::{Entry, Error};
+use keyring::{Entry, Error};
 
 const SERVICE_NAME: &str = "authenticator";
 const USERNAME: &str = "master-key";
@@ -6,7 +6,7 @@ const USERNAME: &str = "master-key";
 /// Initialize the default platform-native credential store. Must be called once at startup
 /// before any other function in this module.
 pub fn init() -> Result<(), String> {
-    keyring::use_native_store(false).map_err(|e| format!("Keyring init error: {}", e))
+    Ok(())
 }
 
 /// Store password in platform keychain
