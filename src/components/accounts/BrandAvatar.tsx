@@ -30,6 +30,39 @@ import {
   SiEtsy,
   SiShopify,
   SiWordpress,
+  SiYoutube,
+  SiTelegram,
+  SiWhatsapp,
+  SiPlaystation,
+  SiEpicgames,
+  SiUbisoft,
+  SiBattledotnet,
+  SiNotion,
+  SiFigma,
+  SiTrello,
+  SiLinear,
+  SiAsana,
+  SiMedium,
+  SiSupabase,
+  SiFirebase,
+  SiFlydotio,
+  SiHetzner,
+  SiOvh,
+  SiGodaddy,
+  SiNamecheap,
+  Si1password,
+  SiAegisauthenticator,
+  SiEnte,
+  SiDashlane,
+  SiAnthropic,
+  SiPerplexity,
+  SiAirbnb,
+  SiUber,
+  SiKucoin,
+  SiOkx,
+  SiPatreon,
+  SiMailchimp,
+  SiZoho,
 } from "@icons-pack/react-simple-icons";
 
 interface BrandAvatarProps {
@@ -47,6 +80,7 @@ interface BrandEntry {
 }
 
 const BRAND_MAP: Record<string, BrandEntry> = {
+  // Major Tech & Cloud
   google: {
     bg: "#ffffff",
     svg: (
@@ -82,36 +116,7 @@ const BRAND_MAP: Record<string, BrandEntry> = {
       </svg>
     ),
   },
-  discord: { Icon: SiDiscord, bg: "#5865F2", textColor: "text-white fill-current" },
   apple: { Icon: SiApple, bg: "#000000", textColor: "text-white fill-current" },
-  cloudflare: { Icon: SiCloudflare, bg: "#F38020", textColor: "text-white fill-current" },
-  binance: { Icon: SiBinance, bg: "#F0B90B", textColor: "text-black fill-current" },
-  steam: { Icon: SiSteam, bg: "#171a21", textColor: "text-white fill-current" },
-  proton: { Icon: SiProton, bg: "#6D4AFF", textColor: "text-white fill-current" },
-  docker: { Icon: SiDocker, bg: "#1D63ED", textColor: "text-white fill-current" },
-  keycloak: { Icon: SiKeycloak, bg: "#008AEC", textColor: "text-white fill-current" },
-  pgadmin: { Icon: SiPostgresql, bg: "#4169E1", textColor: "text-white fill-current" },
-  postgres: { Icon: SiPostgresql, bg: "#4169E1", textColor: "text-white fill-current" },
-  coolify: { Icon: SiCoolify, bg: "#6B46C1", textColor: "text-white fill-current" },
-  spotify: { Icon: SiSpotify, bg: "#1DB954", textColor: "text-white fill-current" },
-  gitlab: { Icon: SiGitlab, bg: "#FC6D26", textColor: "text-white fill-current" },
-  bitbucket: { Icon: SiBitbucket, bg: "#0052CC", textColor: "text-white fill-current" },
-  vercel: { Icon: SiVercel, bg: "#000000", textColor: "text-white fill-current" },
-  netlify: { Icon: SiNetlify, bg: "#00C7B7", textColor: "text-white fill-current" },
-  digitalocean: { Icon: SiDigitalocean, bg: "#0080FF", textColor: "text-white fill-current" },
-  twitch: { Icon: SiTwitch, bg: "#9146FF", textColor: "text-white fill-current" },
-  reddit: { Icon: SiReddit, bg: "#FF4500", textColor: "text-white fill-current" },
-  facebook: { Icon: SiFacebook, bg: "#1877F2", textColor: "text-white fill-current" },
-  instagram: { Icon: SiInstagram, bg: "#E4405F", textColor: "text-white fill-current" },
-  dropbox: { Icon: SiDropbox, bg: "#0061FF", textColor: "text-white fill-current" },
-  npm: { Icon: SiNpm, bg: "#CB3837", textColor: "text-white fill-current" },
-  paypal: { Icon: SiPaypal, bg: "#003087", textColor: "text-white fill-current" },
-  stripe: { Icon: SiStripe, bg: "#635BFF", textColor: "text-white fill-current" },
-  coinbase: { Icon: SiCoinbase, bg: "#0052FF", textColor: "text-white fill-current" },
-  bitwarden: { Icon: SiBitwarden, bg: "#175DDC", textColor: "text-white fill-current" },
-  etsy: { Icon: SiEtsy, bg: "#F56400", textColor: "text-white fill-current" },
-  shopify: { Icon: SiShopify, bg: "#7AB55C", textColor: "text-white fill-current" },
-  wordpress: { Icon: SiWordpress, bg: "#21759B", textColor: "text-white fill-current" },
   amazon: {
     bg: "#FF9900",
     svg: (
@@ -120,6 +125,12 @@ const BRAND_MAP: Record<string, BrandEntry> = {
       </svg>
     ),
   },
+  cloudflare: { Icon: SiCloudflare, bg: "#F38020", textColor: "text-white fill-current" },
+
+  // Communication & Social
+  discord: { Icon: SiDiscord, bg: "#5865F2", textColor: "text-white fill-current" },
+  telegram: { Icon: SiTelegram, bg: "#26A5E4", textColor: "text-white fill-current" },
+  whatsapp: { Icon: SiWhatsapp, bg: "#25D366", textColor: "text-white fill-current" },
   slack: {
     bg: "#4A154B",
     svg: (
@@ -131,6 +142,102 @@ const BRAND_MAP: Record<string, BrandEntry> = {
       </svg>
     ),
   },
+  linkedin: {
+    bg: "#0A66C2",
+    svg: (
+      <svg viewBox="0 0 24 24" className="size-5 fill-white">
+        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+      </svg>
+    ),
+  },
+  reddit: { Icon: SiReddit, bg: "#FF4500", textColor: "text-white fill-current" },
+  facebook: { Icon: SiFacebook, bg: "#1877F2", textColor: "text-white fill-current" },
+  instagram: { Icon: SiInstagram, bg: "#E4405F", textColor: "text-white fill-current" },
+  youtube: { Icon: SiYoutube, bg: "#FF0000", textColor: "text-white fill-current" },
+  twitch: { Icon: SiTwitch, bg: "#9146FF", textColor: "text-white fill-current" },
+  spotify: { Icon: SiSpotify, bg: "#1DB954", textColor: "text-white fill-current" },
+
+  // AI & Productivity
+  chatgpt: {
+    bg: "#10A37F",
+    svg: (
+      <svg viewBox="0 0 24 24" className="size-5 fill-white">
+        <path d="M22.28 9.82a5.98 5.98 0 0 0-.52-4.91 6.04 6.04 0 0 0-6.51-2.9 6.07 6.07 0 0 0-4.66-2.08 6.06 6.06 0 0 0-5.76 4.2 6.03 6.03 0 0 0-4.17 3.01 6.07 6.07 0 0 0 .84 7.08 6.02 6.02 0 0 0 .52 4.9 6.05 6.05 0 0 0 6.51 2.9 6.07 6.07 0 0 0 4.67 2.08 6.06 6.06 0 0 0 5.76-4.2 6.03 6.03 0 0 0 4.16-3.01 6.07 6.07 0 0 0-.85-7.07zM12 18.7a4.7 4.7 0 0 1-2.35-.63l.16-.09 3.9-2.25a.67.67 0 0 0 .34-.58v-4.5l1.35.78a.07.07 0 0 1 .04.05v4.52a4.72 4.72 0 0 1-3.44 2.7zm-6.84-2.85a4.7 4.7 0 0 1-.62-2.35v-2.85l.16.1 3.9 2.25a.67.67 0 0 0 .67 0l3.9-2.25v1.56a.07.07 0 0 1-.03.06l-3.92 2.26a4.72 4.72 0 0 1-4.08.77zm-1.1-7.22a4.7 4.7 0 0 1 1.73-1.73l.16.09 3.9 2.25a.67.67 0 0 0 .67 0l3.9-2.25-1.35-.78a.07.07 0 0 1-.04-.05H9.11a4.72 4.72 0 0 1-.64-3.47zm13.78 4.22l-3.9-2.25a.67.67 0 0 0-.67 0l-3.9 2.25v-1.56a.07.07 0 0 1 .03-.06l3.92-2.26a4.72 4.72 0 0 1 4.72 1.58 4.7 4.7 0 0 1 1.1 2.3v2.85l-.16-.1a.67.67 0 0 0-.34-.06z" />
+      </svg>
+    ),
+  },
+  openai: {
+    bg: "#10A37F",
+    svg: (
+      <svg viewBox="0 0 24 24" className="size-5 fill-white">
+        <path d="M22.28 9.82a5.98 5.98 0 0 0-.52-4.91 6.04 6.04 0 0 0-6.51-2.9 6.07 6.07 0 0 0-4.66-2.08 6.06 6.06 0 0 0-5.76 4.2 6.03 6.03 0 0 0-4.17 3.01 6.07 6.07 0 0 0 .84 7.08 6.02 6.02 0 0 0 .52 4.9 6.05 6.05 0 0 0 6.51 2.9 6.07 6.07 0 0 0 4.67 2.08 6.06 6.06 0 0 0 5.76-4.2 6.03 6.03 0 0 0 4.16-3.01 6.07 6.07 0 0 0-.85-7.07z" />
+      </svg>
+    ),
+  },
+  claude: { Icon: SiAnthropic, bg: "#D97757", textColor: "text-white fill-current" },
+  anthropic: { Icon: SiAnthropic, bg: "#D97757", textColor: "text-white fill-current" },
+  perplexity: { Icon: SiPerplexity, bg: "#22B8CF", textColor: "text-white fill-current" },
+  notion: { Icon: SiNotion, bg: "#000000", textColor: "text-white fill-current" },
+  figma: { Icon: SiFigma, bg: "#F24E1E", textColor: "text-white fill-current" },
+  trello: { Icon: SiTrello, bg: "#0052CC", textColor: "text-white fill-current" },
+  linear: { Icon: SiLinear, bg: "#5E6AD2", textColor: "text-white fill-current" },
+  asana: { Icon: SiAsana, bg: "#F95738", textColor: "text-white fill-current" },
+  medium: { Icon: SiMedium, bg: "#000000", textColor: "text-white fill-current" },
+
+  // Dev & Cloud Hosting
+  docker: { Icon: SiDocker, bg: "#1D63ED", textColor: "text-white fill-current" },
+  keycloak: { Icon: SiKeycloak, bg: "#008AEC", textColor: "text-white fill-current" },
+  pgadmin: { Icon: SiPostgresql, bg: "#4169E1", textColor: "text-white fill-current" },
+  postgres: { Icon: SiPostgresql, bg: "#4169E1", textColor: "text-white fill-current" },
+  coolify: { Icon: SiCoolify, bg: "#6B46C1", textColor: "text-white fill-current" },
+  gitlab: { Icon: SiGitlab, bg: "#FC6D26", textColor: "text-white fill-current" },
+  bitbucket: { Icon: SiBitbucket, bg: "#0052CC", textColor: "text-white fill-current" },
+  vercel: { Icon: SiVercel, bg: "#000000", textColor: "text-white fill-current" },
+  netlify: { Icon: SiNetlify, bg: "#00C7B7", textColor: "text-white fill-current" },
+  digitalocean: { Icon: SiDigitalocean, bg: "#0080FF", textColor: "text-white fill-current" },
+  supabase: { Icon: SiSupabase, bg: "#3ECF8E", textColor: "text-black fill-current" },
+  firebase: { Icon: SiFirebase, bg: "#FFCA28", textColor: "text-black fill-current" },
+  flyio: { Icon: SiFlydotio, bg: "#24185B", textColor: "text-white fill-current" },
+  hetzner: { Icon: SiHetzner, bg: "#D50C2D", textColor: "text-white fill-current" },
+  ovh: { Icon: SiOvh, bg: "#123F6D", textColor: "text-white fill-current" },
+  godaddy: { Icon: SiGodaddy, bg: "#1BDBDB", textColor: "text-black fill-current" },
+  namecheap: { Icon: SiNamecheap, bg: "#DE3723", textColor: "text-white fill-current" },
+  npm: { Icon: SiNpm, bg: "#CB3837", textColor: "text-white fill-current" },
+
+  // Gaming
+  steam: { Icon: SiSteam, bg: "#171a21", textColor: "text-white fill-current" },
+  playstation: { Icon: SiPlaystation, bg: "#003791", textColor: "text-white fill-current" },
+  epicgames: { Icon: SiEpicgames, bg: "#313131", textColor: "text-white fill-current" },
+  ubisoft: { Icon: SiUbisoft, bg: "#000000", textColor: "text-white fill-current" },
+  battlenet: { Icon: SiBattledotnet, bg: "#00AEFF", textColor: "text-white fill-current" },
+  blizzard: { Icon: SiBattledotnet, bg: "#00AEFF", textColor: "text-white fill-current" },
+
+  // Crypto & Finance
+  binance: { Icon: SiBinance, bg: "#F0B90B", textColor: "text-black fill-current" },
+  coinbase: { Icon: SiCoinbase, bg: "#0052FF", textColor: "text-white fill-current" },
+  kucoin: { Icon: SiKucoin, bg: "#23AF91", textColor: "text-white fill-current" },
+  okx: { Icon: SiOkx, bg: "#000000", textColor: "text-white fill-current" },
+  paypal: { Icon: SiPaypal, bg: "#003087", textColor: "text-white fill-current" },
+  stripe: { Icon: SiStripe, bg: "#635BFF", textColor: "text-white fill-current" },
+
+  // Security & Password Managers
+  proton: { Icon: SiProton, bg: "#6D4AFF", textColor: "text-white fill-current" },
+  bitwarden: { Icon: SiBitwarden, bg: "#175DDC", textColor: "text-white fill-current" },
+  "1password": { Icon: Si1password, bg: "#0094F5", textColor: "text-white fill-current" },
+  aegis: { Icon: SiAegisauthenticator, bg: "#0088CC", textColor: "text-white fill-current" },
+  ente: { Icon: SiEnte, bg: "#5A67D8", textColor: "text-white fill-current" },
+  dashlane: { Icon: SiDashlane, bg: "#0E7364", textColor: "text-white fill-current" },
+
+  // Business & E-Commerce
+  etsy: { Icon: SiEtsy, bg: "#F56400", textColor: "text-white fill-current" },
+  shopify: { Icon: SiShopify, bg: "#7AB55C", textColor: "text-white fill-current" },
+  wordpress: { Icon: SiWordpress, bg: "#21759B", textColor: "text-white fill-current" },
+  dropbox: { Icon: SiDropbox, bg: "#0061FF", textColor: "text-white fill-current" },
+  airbnb: { Icon: SiAirbnb, bg: "#FF5A5F", textColor: "text-white fill-current" },
+  uber: { Icon: SiUber, bg: "#000000", textColor: "text-white fill-current" },
+  patreon: { Icon: SiPatreon, bg: "#FF424D", textColor: "text-white fill-current" },
+  mailchimp: { Icon: SiMailchimp, bg: "#FFE01B", textColor: "text-black fill-current" },
+  zoho: { Icon: SiZoho, bg: "#E42527", textColor: "text-white fill-current" },
 };
 
 function matchBrand(issuer?: string, name?: string): BrandEntry | null {
@@ -155,6 +262,7 @@ function matchBrand(issuer?: string, name?: string): BrandEntry | null {
   }
   if (combined.includes("aws")) return BRAND_MAP.amazon;
   if (combined.includes("icloud")) return BRAND_MAP.apple;
+  if (combined.includes("open ai") || combined.includes("gpt")) return BRAND_MAP.chatgpt;
 
   return null;
 }
