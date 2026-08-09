@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Copy, Link2, MoreVertical, Pencil, QrCode, Trash2, RefreshCw } from "lucide-react";
+import BrandAvatar from "@/components/accounts/BrandAvatar";
 import type { AccountView, CodeResponse } from "@/types";
 
 interface AccountCardProps {
@@ -41,8 +42,6 @@ export default function AccountCard({
 }: AccountCardProps) {
   const { t } = useTranslation();
 
-  const initial = account.name.charAt(0).toUpperCase();
-  const bgColor = account.color || "#6366f1";
   const progressValue = code ? (code.remaining / code.period) * 100 : 0;
   const isExpiring = code ? code.remaining < 5 : false;
 
@@ -50,12 +49,11 @@ export default function AccountCard({
     <Card className="overflow-hidden hover:bg-accent/50 transition-colors cursor-pointer py-0">
       <CardContent className="flex items-center gap-3 px-3 py-3">
         {/* Left: Icon / Color indicator */}
-        <div
-          className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
-          style={{ backgroundColor: bgColor }}
-        >
-          {initial}
-        </div>
+        <BrandAvatar
+          name={account.name}
+          issuer={account.issuer}
+          color={account.color}
+        />
 
         {/* Middle: Account info */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">

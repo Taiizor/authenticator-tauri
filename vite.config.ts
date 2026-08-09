@@ -35,7 +35,7 @@ export default defineConfig({
             if (id.includes("@dnd-kit")) {
               return "vendor-dnd";
             }
-            if (id.includes("lucide-react")) {
+            if (id.includes("lucide-react") || id.includes("@icons-pack")) {
               return "vendor-icons";
             }
             return "vendor";

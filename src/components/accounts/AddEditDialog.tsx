@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/tauri";
+import BrandAvatar from "@/components/accounts/BrandAvatar";
 import type { AccountView } from "@/types";
 
 const COLOR_PRESETS = [
@@ -158,7 +159,8 @@ export default function AddEditDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
+        <DialogHeader className="flex flex-row items-center gap-3">
+          <BrandAvatar name={name || "A"} issuer={issuer} color={color} />
           <DialogTitle>
             {isEdit ? t("edit_account") : t("add_account")}
           </DialogTitle>
