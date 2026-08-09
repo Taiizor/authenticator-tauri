@@ -22,7 +22,7 @@ export default function CategoryTabs({
 
   return (
     <ScrollArea className="w-full">
-      <div className="flex items-center gap-2 pb-2">
+      <div className="flex items-center gap-2 pb-3.5">
         <Button
           variant={selected === null ? "default" : "outline"}
           size="sm"
