@@ -39,14 +39,14 @@ pub fn encrypt(data: &[u8], password: &str) -> Result<Vec<u8>, String> {
 
     let mut nonce_bytes = [0u8; NONCE_LEN];
     rand::rng().fill_bytes(&mut nonce_bytes);
-    let nonce = Nonce::from_slice(&nonce_bytes);
+    let nonce = Nonce::from(nonce_bytes);
 
     let cipher =
         Aes256Gcm::new_from_slice(&key).map_err(|e| format!("Cipher init error: {}", e))?;
     key.zeroize();
 
     let ciphertext = cipher
-        .encrypt(nonce, data)
+        .encrypt(&nonce, data)
         .map_err(|e| format!("Encryption error: {}", e))?;
 
     let mut result = Vec::with_capacity(SALT_LEN + NONCE_LEN + ciphertext.len());
@@ -69,14 +69,14 @@ pub fn decrypt(encrypted: &[u8], password: &str) -> Result<Vec<u8>, String> {
     let ciphertext = &encrypted[SALT_LEN + NONCE_LEN..];
 
     let mut key = derive_key(password, salt)?;
-    let nonce = Nonce::from_slice(nonce_bytes);
+    let nonce = Nonce::try_from(nonce_bytes).map_err(|e| format!("Invalid nonce: {}", e))?;
 
     let cipher =
         Aes256Gcm::new_from_slice(&key).map_err(|e| format!("Cipher init error: {}", e))?;
     key.zeroize();
 
     cipher
-        .decrypt(nonce, ciphertext)
+        .decrypt(&nonce, ciphertext)
         .map_err(|_| "Decryption failed: wrong password or corrupted data".to_string())
 }
 
@@ -102,13 +102,13 @@ pub fn encrypt_with_key(
 ) -> Result<Vec<u8>, String> {
     let mut nonce_bytes = [0u8; NONCE_LEN];
     rand::rng().fill_bytes(&mut nonce_bytes);
-    let nonce = Nonce::from_slice(&nonce_bytes);
+    let nonce = Nonce::from(nonce_bytes);
 
     let cipher =
         Aes256Gcm::new_from_slice(key).map_err(|e| format!("Cipher init error: {}", e))?;
 
     let ciphertext = cipher
-        .encrypt(nonce, data)
+        .encrypt(&nonce, data)
         .map_err(|e| format!("Encryption error: {}", e))?;
 
     let mut result = Vec::with_capacity(SALT_LEN + NONCE_LEN + ciphertext.len());
@@ -128,13 +128,13 @@ pub fn decrypt_with_key(encrypted: &[u8], key: &[u8; KEY_LEN]) -> Result<Vec<u8>
 
     let nonce_bytes = &encrypted[SALT_LEN..SALT_LEN + NONCE_LEN];
     let ciphertext = &encrypted[SALT_LEN + NONCE_LEN..];
-    let nonce = Nonce::from_slice(nonce_bytes);
+    let nonce = Nonce::try_from(nonce_bytes).map_err(|e| format!("Invalid nonce: {}", e))?;
 
     let cipher =
         Aes256Gcm::new_from_slice(key).map_err(|e| format!("Cipher init error: {}", e))?;
 
     cipher
-        .decrypt(nonce, ciphertext)
+        .decrypt(&nonce, ciphertext)
         .map_err(|_| "Decryption failed: wrong key or corrupted data".to_string())
 }
 

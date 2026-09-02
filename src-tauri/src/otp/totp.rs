@@ -1,4 +1,4 @@
-use totp_rs::{Algorithm as TotpAlgorithm, Secret, TOTP};
+use totp_rs::{Algorithm as TotpAlgorithm, Builder, Secret, Totp};
 
 use crate::models::account::{Account, Algorithm, CodeResponse, OtpType};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -18,23 +18,24 @@ pub fn generate_totp(account: &Account) -> Result<CodeResponse, String> {
         return Err("Account is not TOTP type".to_string());
     }
 
-    let secret_bytes = Secret::Encoded(account.secret.clone())
-        .to_bytes()
+    let cleaned_secret = account.secret.replace(' ', "").to_uppercase();
+    let secret = Secret::try_from_base32(&cleaned_secret)
         .map_err(|e| format!("Invalid secret: {}", e))?;
 
-    let totp = TOTP::new_unchecked(
-        to_totp_algorithm(&account.algorithm),
-        account.digits as usize,
-        1, // skew
-        account.period as u64,
-        secret_bytes,
-        account.issuer.clone(),
-        account.name.clone(),
-    );
+    let mut builder = Builder::new()
+        .with_algorithm(to_totp_algorithm(&account.algorithm))
+        .with_digits(account.digits as u8)
+        .with_skew(1)
+        .with_step_duration(account.period as u64)
+        .with_secret(secret);
 
-    let code = totp
-        .generate_current()
-        .map_err(|e| format!("TOTP generation error: {}", e))?;
+    if let Some(issuer) = &account.issuer {
+        builder = builder.with_issuer(Some(issuer.as_str()));
+    }
+    builder = builder.with_account_name(account.name.as_str());
+
+    let totp = builder.build_noncompliant();
+    let code = totp.generate_current().to_string();
 
     let remaining = remaining_seconds(account.period);
 
@@ -62,7 +63,7 @@ pub fn remaining_seconds(period: u32) -> u32 {
 /// Validates a Base32-encoded secret key
 pub fn validate_secret(secret: &str) -> bool {
     let cleaned = secret.replace(' ', "").to_uppercase();
-    Secret::Encoded(cleaned).to_bytes().is_ok()
+    Secret::try_from_base32(&cleaned).is_ok()
 }
 
 /// Returns the canonical algorithm string used in otpauth:// URIs.
@@ -146,10 +147,10 @@ fn normalize_otpauth_uri(uri: &str) -> String {
 /// Parses an otpauth:// URI into an Account
 pub fn parse_otpauth_uri(uri: &str) -> Result<Account, String> {
     let normalized = normalize_otpauth_uri(uri);
-    let totp = TOTP::from_url_unchecked(&normalized)
+    let totp = Totp::from_url_unchecked(&normalized)
         .map_err(|e| format!("Invalid otpauth URI: {}", e))?;
 
-    let algorithm = match totp.algorithm {
+    let algorithm = match totp.algorithm() {
         TotpAlgorithm::SHA1 => Algorithm::SHA1,
         TotpAlgorithm::SHA256 => Algorithm::SHA256,
         TotpAlgorithm::SHA512 => Algorithm::SHA512,
@@ -157,7 +158,7 @@ pub fn parse_otpauth_uri(uri: &str) -> Result<Account, String> {
         _ => Algorithm::SHA1,
     };
 
-    let secret_encoded = Secret::Raw(totp.secret.clone()).to_encoded().to_string();
+    let secret_encoded = totp.secret().to_base32();
 
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -184,12 +185,12 @@ pub fn parse_otpauth_uri(uri: &str) -> Result<Account, String> {
 
     Ok(Account {
         id: uuid::Uuid::new_v4().to_string(),
-        name: totp.account_name.clone(),
-        issuer: totp.issuer.clone(),
+        name: totp.account_name().to_string(),
+        issuer: totp.issuer().map(|s| s.to_string()),
         secret: secret_encoded,
         otp_type,
-        digits: totp.digits as u32,
-        period: totp.step as u32,
+        digits: totp.digits() as u32,
+        period: totp.step() as u32,
         algorithm,
         counter,
         category: None,
@@ -198,4 +199,56 @@ pub fn parse_otpauth_uri(uri: &str) -> Result<Account, String> {
         sort_order: 0,
         created_at: now,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_validate_secret() {
+        assert!(validate_secret("JBSWY3DPEHPK3PXP"));
+        assert!(validate_secret("jbsw y3dp ehpk 3pxp"));
+        assert!(!validate_secret("invalid!base32?"));
+    }
+
+    #[test]
+    fn test_generate_totp() {
+        let account = Account {
+            id: "test-id".to_string(),
+            name: "user@example.com".to_string(),
+            issuer: Some("Example".to_string()),
+            secret: "JBSWY3DPEHPK3PXP".to_string(),
+            otp_type: OtpType::Totp,
+            digits: 6,
+            period: 30,
+            algorithm: Algorithm::SHA1,
+            counter: None,
+            category: None,
+            icon: None,
+            color: None,
+            sort_order: 0,
+            created_at: 0,
+        };
+
+        let res = generate_totp(&account);
+        assert!(res.is_ok());
+        let code_res = res.unwrap();
+        assert_eq!(code_res.code.len(), 6);
+        assert!(code_res.code.chars().all(|c| c.is_ascii_digit()));
+    }
+
+    #[test]
+    fn test_parse_otpauth_uri() {
+        let uri = "otpauth://totp/Example:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=Example&algorithm=SHA1&digits=6&period=30";
+        let res = parse_otpauth_uri(uri);
+        assert!(res.is_ok());
+        let account = res.unwrap();
+        assert_eq!(account.name, "user@example.com");
+        assert_eq!(account.issuer, Some("Example".to_string()));
+        assert_eq!(account.secret, "JBSWY3DPEHPK3PXP");
+        assert_eq!(account.digits, 6);
+        assert_eq!(account.period, 30);
+        assert_eq!(account.algorithm, Algorithm::SHA1);
+    }
 }
