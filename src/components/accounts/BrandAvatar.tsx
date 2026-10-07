@@ -332,37 +332,56 @@ const BRAND_MAP: Record<string, BrandEntry> = {
   zoho: { Icon: SiZoho, bg: "#E42527", textColor: "text-white fill-current" },
 };
 
-function matchBrand(issuer?: string, name?: string): BrandEntry | null {
-  const combined = `${issuer || ""} ${name || ""}`.toLowerCase();
+function findBrand(text: string): BrandEntry | null {
+  const normalized = text.toLowerCase().trim();
+  if (!normalized) return null;
 
-  // Special multi-word aliases & overrides
-  if (combined.includes("opera gx") || combined.includes("operagx")) return BRAND_MAP.operagx;
-  if (combined.includes("mozilla firefox")) return BRAND_MAP.firefox;
-  if (combined.includes("cc payment")) return BRAND_MAP.ccpayment;
-  if (combined.includes("vkontakte") || combined.includes("vk.com")) return BRAND_MAP.vk;
-  if (combined.includes("x.com") || combined.includes("x corp")) return BRAND_MAP.x;
-  if (combined.includes("gmail")) return BRAND_MAP.google;
+  // Specific service & product overrides
+  if (normalized.includes("opera gx") || normalized.includes("operagx")) return BRAND_MAP.operagx;
+  if (normalized.includes("mozilla firefox")) return BRAND_MAP.firefox;
+  if (normalized.includes("cc payment")) return BRAND_MAP.ccpayment;
+  if (normalized.includes("vkontakte") || normalized.includes("vk.com")) return BRAND_MAP.vk;
+  if (normalized.includes("x.com") || normalized.includes("x corp")) return BRAND_MAP.x;
+  if (normalized.includes("azure") || normalized.includes("office365")) return BRAND_MAP.microsoft;
+  if (normalized.includes("aws")) return BRAND_MAP.amazon;
+  if (normalized.includes("open ai") || normalized.includes("gpt")) return BRAND_MAP.chatgpt;
+
+  // Direct brand map check
+  for (const [key, entry] of Object.entries(BRAND_MAP)) {
+    if (key.length <= 2) {
+      if (new RegExp(`(^|[^a-z0-9])${key}([^a-z0-9]|$)`, "i").test(normalized)) {
+        return entry;
+      }
+    } else if (normalized.includes(key)) {
+      return entry;
+    }
+  }
+
+  // Generic email provider fallbacks (only if no other brand matched)
+  if (normalized.includes("gmail")) return BRAND_MAP.google;
   if (
-    combined.includes("outlook") ||
-    combined.includes("azure") ||
-    combined.includes("office365") ||
-    combined.includes("hotmail") ||
-    combined.includes("live.com")
+    normalized.includes("outlook") ||
+    normalized.includes("hotmail") ||
+    normalized.includes("live.com")
   ) {
     return BRAND_MAP.microsoft;
   }
-  if (combined.includes("aws")) return BRAND_MAP.amazon;
-  if (combined.includes("icloud")) return BRAND_MAP.apple;
-  if (combined.includes("open ai") || combined.includes("gpt")) return BRAND_MAP.chatgpt;
+  if (normalized.includes("icloud")) return BRAND_MAP.apple;
 
-  for (const [key, entry] of Object.entries(BRAND_MAP)) {
-    if (key.length <= 2) {
-      if (new RegExp(`(^|[^a-z0-9])${key}([^a-z0-9]|$)`, "i").test(combined)) {
-        return entry;
-      }
-    } else if (combined.includes(key)) {
-      return entry;
-    }
+  return null;
+}
+
+function matchBrand(issuer?: string, name?: string): BrandEntry | null {
+  // 1. Search in provider (issuer) first
+  if (issuer) {
+    const issuerMatch = findBrand(issuer);
+    if (issuerMatch) return issuerMatch;
+  }
+
+  // 2. If no match in provider, search in account name
+  if (name) {
+    const nameMatch = findBrand(name);
+    if (nameMatch) return nameMatch;
   }
 
   return null;
