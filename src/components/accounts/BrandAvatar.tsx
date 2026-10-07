@@ -67,6 +67,8 @@ import {
   SiOperagx,
   SiVk,
   SiX,
+  SiMozilla,
+  SiFirefox,
 } from "@icons-pack/react-simple-icons";
 
 interface BrandAvatarProps {
@@ -232,6 +234,8 @@ const BRAND_MAP: Record<string, BrandEntry> = {
   // Browsers
   operagx: { Icon: SiOperagx, bg: "#EE2950", textColor: "text-white fill-current" },
   opera: { Icon: SiOpera, bg: "#FF1B2D", textColor: "text-white fill-current" },
+  firefox: { Icon: SiFirefox, bg: "#FF7139", textColor: "text-white fill-current" },
+  mozilla: { Icon: SiMozilla, bg: "#161616", textColor: "text-white fill-current" },
 
   // Gaming
   steam: { Icon: SiSteam, bg: "#171a21", textColor: "text-white fill-current" },
@@ -333,6 +337,7 @@ function matchBrand(issuer?: string, name?: string): BrandEntry | null {
 
   // Special multi-word aliases & overrides
   if (combined.includes("opera gx") || combined.includes("operagx")) return BRAND_MAP.operagx;
+  if (combined.includes("mozilla firefox")) return BRAND_MAP.firefox;
   if (combined.includes("cc payment")) return BRAND_MAP.ccpayment;
   if (combined.includes("vkontakte") || combined.includes("vk.com")) return BRAND_MAP.vk;
   if (combined.includes("x.com") || combined.includes("x corp")) return BRAND_MAP.x;
