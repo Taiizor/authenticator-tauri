@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { APP_VERSION } from "@/lib/version";
 
 interface FooterProps {
   accountCount: number;
@@ -14,7 +15,7 @@ export default function Footer({ accountCount }: FooterProps) {
           {t("accounts_count", { count: accountCount })}
         </span>
         <span className="text-xs text-muted-foreground">
-          Authenticator v1.0.0
+          Authenticator v{APP_VERSION}
         </span>
       </div>
     </footer>

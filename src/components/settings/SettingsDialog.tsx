@@ -21,6 +21,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/tauri";
 import { setTheme } from "@/lib/theme";
+import { APP_VERSION } from "@/lib/version";
 import type { Settings } from "@/types";
 
 interface SettingsDialogProps {
@@ -349,7 +350,7 @@ export default function SettingsDialog({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>{t("settings_dialog.version")}</Label>
-                <span className="text-muted-foreground text-sm">1.0.0</span>
+                <span className="text-muted-foreground text-sm">{APP_VERSION}</span>
               </div>
 
               <div className="flex items-center justify-between">
