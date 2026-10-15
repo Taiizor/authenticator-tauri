@@ -94,7 +94,11 @@ jobs:
           tauriScript: bunx tauri
           tagName: v${{ env.APP_VERSION }}
           releaseName: "Authenticator v${{ env.APP_VERSION }}"
-          releaseBody: "See the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
+          releaseBody: |
+            See the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+
+            > [!NOTE]
+            > **macOS users:** the app is not notarized by Apple, so Gatekeeper may report the app as "damaged". Download the `.dmg` matching your chip (`aarch64` for Apple Silicon, `x64` for Intel), move the app to `Applications`, then run: `xattr -cr /Applications/Authenticator.app`
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
@@ -116,6 +120,9 @@ jobs:
 
             > [!WARNING]
             > This is a development build. For production use, download the [latest stable release](https://github.com/${{ github.repository }}/releases/latest) instead.
+
+            > [!NOTE]
+            > **macOS users:** the app is not notarized by Apple, so Gatekeeper may report the app as "damaged". Download the `.dmg` matching your chip (`aarch64` for Apple Silicon, `x64` for Intel), move the app to `Applications`, then run: `xattr -cr /Applications/Authenticator.app`
           releaseDraft: false
           prerelease: true
           args: ${{ matrix.args }}

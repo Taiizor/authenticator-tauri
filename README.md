@@ -47,8 +47,17 @@ Download the latest installer for your platform from the [Releases](https://gith
 | Platform | File |
 |----------|------|
 | Windows  | `.msi` / `.exe` |
-| macOS    | `.dmg` |
+| macOS    | `.dmg` (`aarch64` for Apple Silicon, `x64` for Intel) |
 | Linux    | `.deb` / `.AppImage` |
+
+> [!NOTE]
+> **macOS users:** the app is not notarized by Apple, so Gatekeeper may claim the app is "damaged" and refuse to open it. To fix, move the app to `Applications`, then run:
+>
+> ```bash
+> xattr -cr /Applications/Authenticator.app
+> ```
+>
+> Alternatively, right-click the app → Open → Open.
 
 ### Build from Source
 
