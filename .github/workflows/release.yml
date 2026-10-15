@@ -67,14 +67,14 @@ jobs:
           "
           jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
 
-      # --- Set dev version (1.0.0 → 1.0.0-14 for bundle, v1.0.0-dev.14 for tag) ---
+      # --- Set dev version (1.0.0 → 1.0.0+14 for bundle, v1.0.0-dev.14 for tag) ---
       - name: Set dev version
         if: github.ref_type != 'tag'
         shell: bash
         run: |
           BASE=$(jq -r '.version' package.json)
           RUN=${{ github.run_number }}
-          BUNDLE_VERSION="${BASE}-${RUN}"
+          BUNDLE_VERSION="${BASE}+${RUN}"
           echo "APP_VERSION=${BASE}-dev.${RUN}" >> $GITHUB_ENV
           # Patch version (python3 for JSON5, jq for JSON)
           python3 -c "
